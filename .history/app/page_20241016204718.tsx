@@ -1,14 +1,10 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Suspense, lazy } from 'react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedNavLink from '../components/AnimatedNavLink';
+import IconCloud from '../components/ui/icon-cloud';
 import BoxReveal from '../components/ui/box-reveal';
-
-const IconCloud = lazy(() => import('../components/ui/icon-cloud'));
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
@@ -60,13 +56,7 @@ export default function Home() {
               </BoxReveal>
             </div>
             <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
-              <Suspense fallback={
-                <div className="w-full h-[400px] flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
-                </div>
-              }>
-                <IconCloud />
-              </Suspense>
+              <IconCloud />
             </div>
           </section>
         </AnimatedSection>

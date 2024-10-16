@@ -61,25 +61,17 @@ export default function IconCloud() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const cachedData = localStorage.getItem('iconCloudData');
-    if (cachedData) {
-      setData(JSON.parse(cachedData));
-    } else {
-      fetchSimpleIcons({
-        slugs: [
-          'ethereum', 'solidity', 'web3dotjs', 'metamask', 'openzeppelin',
-          'polkadot', 'chainlink', 'rust', 'bitcoin',
-          'solana', 'ipfs', 'polygon',
-          'aave', 'defi', 'nft',
-          'truffle', 'hardhat', 'ganache',
-          'etherscan', 'infura', 'alchemy',
-          'ledger', 'trezor', 'binance', 'coinbase'
-        ],
-      }).then(fetchedData => {
-        setData(fetchedData);
-        localStorage.setItem('iconCloudData', JSON.stringify(fetchedData));
-      });
-    }
+    fetchSimpleIcons({
+      slugs: [
+        'ethereum', 'solidity', 'web3dotjs', 'metamask', 'openzeppelin',
+        'polkadot', 'chainlink', 'rust', 'bitcoin',
+        'solana', 'ipfs', 'polygon',
+        'aave', 'defi', 'nft',
+        'truffle', 'hardhat', 'ganache',
+        'etherscan', 'infura', 'alchemy',
+        'ledger', 'trezor', 'binance', 'coinbase'
+      ],
+    }).then(setData);
   }, []);
 
   const renderedIcons = useMemo(() => {
@@ -91,11 +83,7 @@ export default function IconCloud() {
   }, [data, theme]);
 
   if (!renderedIcons) {
-    return (
-      <div className="w-full h-[400px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
-      </div>
-    );
+    return <div className="w-full h-[400px] flex items-center justify-center">Loading...</div>;
   }
 
   return (

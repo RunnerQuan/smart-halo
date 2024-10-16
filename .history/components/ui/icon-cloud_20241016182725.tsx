@@ -17,7 +17,7 @@ export const cloudProps: Omit<ICloud, "children"> = {
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
-      height: "400px",
+      height: "400px", // 设置一个固定高度
     },
   },
   options: {
@@ -30,7 +30,7 @@ export const cloudProps: Omit<ICloud, "children"> = {
     initial: [0.1, -0.1],
     clickToFront: 500,
     tooltipDelay: 0,
-    outlineColour: "#0000",
+    outlineColour: "#ffffff",
     maxSpeed: 0.04,
     minSpeed: 0.02,
   },
@@ -61,42 +61,26 @@ export default function IconCloud() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const cachedData = localStorage.getItem('iconCloudData');
-    if (cachedData) {
-      setData(JSON.parse(cachedData));
-    } else {
-      fetchSimpleIcons({
-        slugs: [
-          'ethereum', 'solidity', 'web3dotjs', 'metamask', 'openzeppelin',
-          'polkadot', 'chainlink', 'rust', 'bitcoin',
-          'solana', 'ipfs', 'polygon',
-          'aave', 'defi', 'nft',
-          'truffle', 'hardhat', 'ganache',
-          'etherscan', 'infura', 'alchemy',
-          'ledger', 'trezor', 'binance', 'coinbase'
-        ],
-      }).then(fetchedData => {
-        setData(fetchedData);
-        localStorage.setItem('iconCloudData', JSON.stringify(fetchedData));
-      });
-    }
+    fetchSimpleIcons({
+      slugs: [
+        'ethereum', 'solidity', 'web3dotjs', 'metamask', 'openzeppelin',
+        'polkadot', 'chainlink', 'rust', 'webassembly', 'bitcoin',
+        'solana', 'gnosis', 'ipfs', 'polygon', 'uniswap',
+        'aave', 'compound', 'defi', 'nft', 'dao',
+        'consensys', 'truffle', 'hardhat', 'ganache', 'remix',
+        'etherscan', 'infura', 'alchemy', 'opensea', 'metamask',
+        'ledger', 'trezor', 'binance', 'coinbase', 'kraken'
+      ],
+    }).then(setData);
   }, []);
 
   const renderedIcons = useMemo(() => {
     if (!data) return null;
 
-    return Object.values(data.simpleIcons as Record<string, SimpleIcon>).map((icon) =>
+    return Object.values(data.simpleIcons).map((icon: SimpleIcon) =>
       renderCustomIcon(icon, theme || "dark"),
     );
   }, [data, theme]);
-
-  if (!renderedIcons) {
-    return (
-      <div className="w-full h-[400px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
-      </div>
-    );
-  }
 
   return (
     // @ts-ignore
