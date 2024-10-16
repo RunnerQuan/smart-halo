@@ -8,8 +8,8 @@ export default function Home() {
   const iconSlugs = ['react', 'nextdotjs', 'typescript', 'javascript', 'html5', 'css3', 'tailwindcss', 'nodejs'];
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#0f1729] text-white font-song">
-      <nav className="fixed top-0 left-0 right-0 z-10 bg-[#0f1729] bg-opacity-80 backdrop-filter backdrop-blur-lg">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-900 text-purple-300 font-song">
+      <nav className="fixed top-0 left-0 right-0 z-10 bg-gray-800 bg-opacity-80 backdrop-filter backdrop-blur-lg">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <Image src="/icons/logo.png" alt="SmartHalo Logo" width={40} height={40} />
@@ -23,30 +23,14 @@ export default function Home() {
         </div>
       </nav>
 
-      <div className="mt-20 w-full max-w-7xl mx-auto">
+      <div className="mt-20 w-full">
         <AnimatedSection>
-          <section className="flex flex-col md:flex-row items-start justify-between mt-32">
+          <section className="flex flex-col md:flex-row items-center justify-between mt-32">
             <div className="md:w-1/2 text-left">
-              <h1 className="text-6xl font-bold mb-6 text-purple-300 leading-tight">
+              <h1 className="text-5xl font-bold mb-6 text-purple-300">
                 SmartHalo 智能合约反编译输出优化工具
               </h1>
-              <p className="text-xl text-white mb-8 max-w-xl">
-                SmartHalo - 让您的智能合约代码更清晰、更易读、更安全
-              </p>
-              <ul className="mb-8 space-y-2">
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  使用我们经验丰富的审计团队帮助您自信地启动项目
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  使用我们先进的智能合约分析和监控技术保护您的Web3操作
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  反编译和分析合约 - 即使没有源代码或ABI - 以Solidity风格的可读格式查看
-                </li>
-              </ul>
+              <p className="text-xl text-purple-200 mb-8">SmartHalo - 让您的智能合约代码更清晰、更易读、更安全</p>
               <button className="bg-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-purple-700 transition transform hover:scale-105">
                 开始优化
               </button>
@@ -70,8 +54,8 @@ export default function Home() {
                     <path d={item.icon} />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{item.title}</h3>
-                <p className="text-white">{item.desc}</p>
+                <h3 className="text-xl font-semibold mb-2 text-purple-300">{item.title}</h3>
+                <p className="text-purple-200">{item.desc}</p>
               </div>
             ))}
           </section>
@@ -79,7 +63,7 @@ export default function Home() {
 
         <AnimatedSection>
           <section className="mt-32 text-center w-full">
-            <h2 className="text-4xl font-bold mb-12 text-white">
+            <h2 className="text-4xl font-bold mb-12 text-purple-300">
               为什么选择 SmartHalo?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -90,8 +74,8 @@ export default function Home() {
                 { title: "持续的更新与支持", desc: "定期更新优化算法,提供及时的技术支持" }
               ].map((item, index) => (
                 <div key={index} className="bg-gray-800 p-6 rounded-lg transform hover:scale-105 transition duration-300">
-                  <h3 className="text-xl font-semibold mb-2 text-white">{item.title}</h3>
-                  <p className="text-white">{item.desc}</p>
+                  <h3 className="text-xl font-semibold mb-2 text-purple-300">{item.title}</h3>
+                  <p className="text-purple-200">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -99,7 +83,7 @@ export default function Home() {
         </AnimatedSection>
       </div>
 
-      <footer className="mt-32 text-center text-white">
+      <footer className="mt-32 text-center text-purple-300">
         <p>&copy; 2024 SmartHalo. 保留所有权利。</p>
       </footer>
     </main>

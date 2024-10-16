@@ -8,8 +8,22 @@ export default function Home() {
   const iconSlugs = ['react', 'nextdotjs', 'typescript', 'javascript', 'html5', 'css3', 'tailwindcss', 'nodejs'];
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#0f1729] text-white font-song">
-      <nav className="fixed top-0 left-0 right-0 z-10 bg-[#0f1729] bg-opacity-80 backdrop-filter backdrop-blur-lg">
+    // <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-100 text-black font-song">
+    //   <nav className="fixed top-0 left-0 right-0 z-10 bg-gray-100 bg-opacity-80 backdrop-filter backdrop-blur-lg">
+    //     <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+    //       <Link href="/" className="flex items-center">
+    //         <Image src="/icons/logo.png" alt="SmartHalo Logo" width={40} height={40} />
+    //       </Link>
+    //       <div className="hidden md:flex items-center space-x-8">
+    //         <AnimatedNavLink href="/">主页</AnimatedNavLink>
+    //         <AnimatedNavLink href="/contract-optimization">合约地址优化</AnimatedNavLink>
+    //         <AnimatedNavLink href="/custom-optimization">自定义优化</AnimatedNavLink>
+    //         <AnimatedNavLink href="/tutorials">使用教程</AnimatedNavLink>
+    //       </div>
+    //     </div>
+    //   </nav>
+        <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-100 text-black font-song">
+      <nav className="fixed top-0 left-0 right-0 z-10 bg-gray-100 bg-opacity-80 backdrop-filter backdrop-blur-lg">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <Image src="/icons/logo.png" alt="SmartHalo Logo" width={40} height={40} />

@@ -2,14 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedNavLink from '../components/AnimatedNavLink';
-import IconCloud from '../components/ui/icon-cloud';
 
 export default function Home() {
-  const iconSlugs = ['react', 'nextdotjs', 'typescript', 'javascript', 'html5', 'css3', 'tailwindcss', 'nodejs'];
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#0f1729] text-white font-song">
-      <nav className="fixed top-0 left-0 right-0 z-10 bg-[#0f1729] bg-opacity-80 backdrop-filter backdrop-blur-lg">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-black text-white font-song">
+      <nav className="fixed top-0 left-0 right-0 z-10 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <Image src="/icons/logo.png" alt="SmartHalo Logo" width={40} height={40} />
@@ -23,37 +20,16 @@ export default function Home() {
         </div>
       </nav>
 
-      <div className="mt-20 w-full max-w-7xl mx-auto">
+      <div className="mt-20">
         <AnimatedSection>
-          <section className="flex flex-col md:flex-row items-start justify-between mt-32">
-            <div className="md:w-1/2 text-left">
-              <h1 className="text-6xl font-bold mb-6 text-purple-300 leading-tight">
-                SmartHalo 智能合约反编译输出优化工具
-              </h1>
-              <p className="text-xl text-white mb-8 max-w-xl">
-                SmartHalo - 让您的智能合约代码更清晰、更易读、更安全
-              </p>
-              <ul className="mb-8 space-y-2">
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  使用我们经验丰富的审计团队帮助您自信地启动项目
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  使用我们先进的智能合约分析和监控技术保护您的Web3操作
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  反编译和分析合约 - 即使没有源代码或ABI - 以Solidity风格的可读格式查看
-                </li>
-              </ul>
-              <button className="bg-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-purple-700 transition transform hover:scale-105">
-                开始优化
-              </button>
-            </div>
-            <div className="md:w-1/2 mt-8 md:mt-0">
-              <IconCloud iconSlugs={iconSlugs} />
-            </div>
+          <section className="text-center mt-32">
+            <h1 className="text-6xl font-bold mb-6 text-white">
+              SmartHalo 智能合约反编译优化工具
+            </h1>
+            <p className="text-xl text-white mb-8">SmartHalo - 让您的智能合约代码更清晰、更易读、更安全</p>
+            <button className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition transform hover:scale-105">
+              开始优化
+            </button>
           </section>
         </AnimatedSection>
 
@@ -64,13 +40,13 @@ export default function Home() {
               { title: "安全可靠", desc: "采用先进的安全措施保护您的合约代码", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" },
               { title: "灵活定制", desc: "根据您的需求自定义优化参数和输出格式", icon: "M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" }
             ].map((item, index) => (
-              <div key={index} className="text-center p-6 bg-gray-800 rounded-lg">
-                <div className="bg-purple-900 rounded-full p-6 inline-block mb-4">
+              <div key={index} className="text-center p-6 bg-gray-900 rounded-lg">
+                <div className="bg-blue-900 rounded-full p-6 inline-block mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d={item.icon} />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{item.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                 <p className="text-white">{item.desc}</p>
               </div>
             ))}
@@ -89,7 +65,7 @@ export default function Home() {
                 { title: "全面的合约支持", desc: "支持多种智能合约语言和区块链平台" },
                 { title: "持续的更新与支持", desc: "定期更新优化算法,提供及时的技术支持" }
               ].map((item, index) => (
-                <div key={index} className="bg-gray-800 p-6 rounded-lg transform hover:scale-105 transition duration-300">
+                <div key={index} className="bg-gray-900 p-6 rounded-lg transform hover:scale-105 transition duration-300">
                   <h3 className="text-xl font-semibold mb-2 text-white">{item.title}</h3>
                   <p className="text-white">{item.desc}</p>
                 </div>
