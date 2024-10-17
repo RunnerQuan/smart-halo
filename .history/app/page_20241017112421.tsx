@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Suspense, lazy } from 'react';
 import AnimatedSection from '../components/AnimatedSection';
+import AnimatedNavLink from '../components/AnimatedNavLink';
 import AnimatedButton from '../components/ui/animated-button';
 import Navbar from '../components/Navbar';
 
