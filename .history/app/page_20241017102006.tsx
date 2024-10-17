@@ -10,22 +10,10 @@ import AnimatedButton from '../components/ui/animated-button';
 
 const IconCloud = lazy(() => import('../components/ui/icon-cloud'));
 
-const titleAnimation = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.6, 
-      ease: "easeOut" 
-    } 
-  }
-};
-
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
-      <nav className="fixed top-0 left-0 right-0 z-10 bg-[#1A1A1A] bg-opacity-80 backdrop-filter backdrop-blur-lg">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gradient-to-b from-gray-900 to-black text-white font-sans">
+      <nav className="fixed top-0 left-0 right-0 z-10 bg-[#1E1E1E] bg-opacity-80 backdrop-filter backdrop-blur-lg">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 font-tech">
@@ -53,19 +41,19 @@ export default function Home() {
               <h1 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 leading-tight">
                 SmartHalo 智能合约反编译输出优化工具
               </h1>
-              <p className="text-xl text-white mb-8 max-w-xl">
+              <p className="text-xl text-gray-300 mb-8 max-w-xl">
                 SmartHalo - 让您的智能合约代码更清晰、更易读、更安全
               </p>
               <ul className="mb-8 space-y-2">
-                <li className="flex items-center text-white">
+                <li className="flex items-center">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                   使用我们经验丰富的审计团队帮助您自信地启动项目
                 </li>
-                <li className="flex items-center text-white">
+                <li className="flex items-center">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                   使用我们先进的智能合约分析和监控技术保护您的Web3操作
                 </li>
-                <li className="flex items-center text-white">
+                <li className="flex items-center">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                   反编译和分析合约 - 即使没有源代码或ABI - 以Solidity风格的可读格式查看
                 </li>
@@ -92,50 +80,35 @@ export default function Home() {
         </AnimatedSection>
 
         <AnimatedSection>
-          <section className="mt-32 w-full">
-            <motion.h2 
-              className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-              initial="hidden"
-              animate="visible"
-              variants={titleAnimation}
-            >
-              工具特色
-            </motion.h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {[
-                { title: "快速优化", desc: "在几秒钟内完成智能合约的反编译和优化", icon: "/icons/speed.svg" },
-                { title: "安全可靠", desc: "采用先进的安全措施保护您的合约代码", icon: "/icons/security.svg" },
-                { title: "灵活定制", desc: "根据您的需求自定义优化参数和输出格式", icon: "/icons/customize.svg" }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl shadow-lg border border-gray-700 hover:border-cyan-500 transition-all duration-300 text-center"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
-                >
-                  <div className="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full p-4 inline-block mb-6">
-                    <Image src={item.icon} alt={item.title} width={40} height={40} className="filter invert" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-4 text-cyan-300">{item.title}</h3>
-                  <p className="text-white">{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
+          <section className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-10 w-full">
+            {[
+              { title: "快速优化", desc: "在几秒钟内完成智能合约的反编译和优化", icon: "/icons/speed.svg", color: "from-blue-500 to-teal-400" },
+              { title: "安全可靠", desc: "采用先进的安全措施保护您的合约代码", icon: "/icons/security.svg", color: "from-purple-500 to-indigo-500" },
+              { title: "灵活定制", desc: "根据您的需求自定义优化参数和输出格式", icon: "/icons/customize.svg", color: "from-pink-500 to-orange-400" }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className={`text-center p-8 rounded-2xl shadow-lg bg-gradient-to-br ${item.color}`}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+              >
+                <div className="bg-white rounded-full p-4 inline-block mb-6">
+                  <Image src={item.icon} alt={item.title} width={40} height={40} className="filter invert" />
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 text-white">{item.title}</h3>
+                <p className="text-gray-100">{item.desc}</p>
+              </motion.div>
+            ))}
           </section>
         </AnimatedSection>
 
         <AnimatedSection>
           <section className="mt-32 text-center w-full">
-            <motion.h2 
-              className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-              initial="hidden"
-              animate="visible"
-              variants={titleAnimation}
-            >
+            <h2 className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
               示例合约
-            </motion.h2>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 { address: "0x1234567890123456789012345678901234567890", info: "合约A的详细信息" },
@@ -145,17 +118,15 @@ export default function Home() {
               ].map((contract, index) => (
                 <motion.div
                   key={index}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg overflow-hidden relative group"
+                  className="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-purple-500 transition-all duration-300"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ y: -5 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                  <h3 className="text-xl font-semibold mb-2 text-cyan-300">合约地址:</h3>
-                  <p className="text-white mb-4 font-mono text-base">{contract.address}</p>
-                  <p className="text-white mb-4 text-lg">{contract.info}</p>
-                  <AnimatedButton className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-full hover:from-cyan-600 hover:to-blue-600 transition-all duration-300">
+                  <h3 className="text-lg font-semibold mb-2 text-purple-300 break-all">合约地址: {contract.address}</h3>
+                  <p className="text-gray-400 mb-4">{contract.info}</p>
+                  <AnimatedButton>
                     查看详情
                   </AnimatedButton>
                 </motion.div>
@@ -166,14 +137,9 @@ export default function Home() {
 
         <AnimatedSection>
           <section className="mt-32 text-center w-full">
-            <motion.h2 
-              className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-              initial="hidden"
-              animate="visible"
-              variants={titleAnimation}
-            >
+            <h2 className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
               为什么选择 SmartHalo?
-            </motion.h2>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 { title: "直观的用户界面", desc: "简洁明了的设计,让您轻松上手使用", icon: "🎨" },
@@ -190,8 +156,8 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                 >
                   <div className="text-4xl mb-4">{item.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2 text-cyan-300">{item.title}</h3>
-                  <p className="text-white">{item.desc}</p>
+                  <h3 className="text-xl font-semibold mb-2 text-purple-300">{item.title}</h3>
+                  <p className="text-gray-400">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
