@@ -7,7 +7,7 @@ import { Suspense, lazy } from 'react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/ui/animated-button';
 import Navbar from '../components/Navbar';
-import { FaCode, FaQuestionCircle } from 'react-icons/fa';
+import { FaRocket, FaCode, FaQuestionCircle } from 'react-icons/fa';
 
 const IconCloud = lazy(() => import('../components/ui/icon-cloud'));
 
@@ -41,20 +41,20 @@ export default function Home() {
                 SmartHalo 智能合约反编译输出优化工具
               </h1>
               <p className="text-xl text-white mb-8 max-w-xl">
-                SmartHalo - 让智能合约反编译输出更清晰、更准确、更易读
+                SmartHalo - 让您的智能合约代码更清晰、更易读、更安全
               </p>
               <ul className="mb-8 space-y-2">
                 <li className="flex items-center text-white">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  通过静态分析和大语言模型的结合，有效解决变量类型恢复、方法边界识别等问题
+                  使用我们经验丰富的审计团队帮助您自信地启动项目
                 </li>
                 <li className="flex items-center text-white">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  优化现有反编译器输出，帮助用户更好地理解智能合约字节码
+                  使用我们先进的智能合约分析和监控技术保护您的Web3操作
                 </li>
                 <li className="flex items-center text-white">
                   <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  支持代码重编译，验证输出准确性，确保反编译输出优化结果与原始程序行为一致
+                  反编译和分析合约 - 即使没有源代码或ABI - 以Solidity风格的可读格式查看
                 </li>
               </ul>
               <div className="flex space-x-8">
@@ -85,20 +85,21 @@ export default function Home() {
         </AnimatedSection>
 
         <AnimatedSection>
-          <section className="mt-32 w-full flex flex-col items-center">
+          <section className="mt-32 w-full flex flex-col items-center text-center">
             <motion.h2 
               className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
               initial="hidden"
               animate="visible"
               variants={titleAnimation}
             >
+              <FaRocket className="inline-block mr-2 mb-1" />
               工具特色
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
+                { title: "快速优化", desc: "在几秒钟内完成智能合约的反编译和优化", icon: "/icons/speed.svg" },
+                { title: "安全可靠", desc: "采用先进的安全措施保护您的合约代码", icon: "/icons/security.svg" },
+                { title: "灵活定制", desc: "根据您的需求自定义优化参数和输出格式", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -120,7 +121,7 @@ export default function Home() {
         </AnimatedSection>
 
         <AnimatedSection>
-          <section className="mt-32 text-center w-full flex flex-col items-center">
+          <section className="mt-32 text-center w-full flex flex-col items-center text-center">
             <motion.h2 
               className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
               initial="hidden"

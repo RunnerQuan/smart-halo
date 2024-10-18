@@ -110,7 +110,7 @@ export default function CustomOptimization() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="bg-gray-800 p-6 rounded-xl text-center flex flex-col items-center justify-center"
+                className="bg-gray-800 p-6 rounded-xl text-center"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >

@@ -96,9 +96,9 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
+                { title: "轻量化设计  快速响应", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
+                { title: "精准优化反编译输出", desc: "通过结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
+                { title: "灵活定制，", desc: "根据您的需求自定义优化参数和输出格式", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div
                   key={index}

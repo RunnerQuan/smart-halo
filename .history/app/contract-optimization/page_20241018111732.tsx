@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaSearch, FaEye } from 'react-icons/fa';
+import { FaSearch, FaInfoCircle, FaEye } from 'react-icons/fa';
 
 export default function ContractOptimization() {
   const [contractAddress, setContractAddress] = useState('');
@@ -82,7 +82,7 @@ export default function ContractOptimization() {
         >
           <h2 className="text-2xl font-semibold mb-4 text-purple-400 text-center">功能介绍</h2>
           <p className="mb-4 text-gray-300">
-          用户输入任意的智能合约地址，系统会从 Dedaub 平台上找到对应的合约，并对其进行反编译，生成反编译输出。随后，SmartHalo 工具会对该反编译输出进行深度优化，确保变量类型准确、合约属性恢复完整、方法边界清晰。
+            本界面提供按合约地址进行优化的功能，用户可以输入合约地址并选择相应的区块链网络，系统将提供针对该合约地址的优化建议。
           </p>
           <p className="text-gray-300">
             优化后，您可以查看该反编译输出的性能提升和相关信息。该工具帮助研究人员根据合约地址优化反编译输出，提高效率。

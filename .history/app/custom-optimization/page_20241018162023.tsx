@@ -1,14 +1,31 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt } from 'react-icons/fa';
 
+SyntaxHighlighter.registerLanguage('solidity', solidity);
+
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
+  const [optimizedCode, setOptimizedCode] = useState('');
   const [showError, setShowError] = useState(false);
+
+  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        setContractCode(content);
+      };
+      reader.readAsText(file);
+    }
+  }, []);
 
   const handleOptimize = () => {
     if (!contractCode.trim()) {
@@ -16,8 +33,8 @@ export default function CustomOptimization() {
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    // 这里应该是跳转到优化详情页的逻辑
-    window.location.href = '/optimization-details';
+    // 这里应该是优化代码的逻辑，现在我们只是简单地复制代码
+    setOptimizedCode(contractCode);
   };
 
   return (
@@ -43,42 +60,61 @@ export default function CustomOptimization() {
         </motion.p>
 
         <motion.div 
-          className="w-full mx-auto mb-12"
+          className="w-full mx-auto mb-12 flex space-x-4"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <textarea 
-            className="w-full h-[400px] bg-gray-800 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="在此输入智能合约反编译输出代码..."
-            value={contractCode}
-            onChange={(e) => setContractCode(e.target.value)}
-          ></textarea>
-          <div className="flex justify-between">
-            <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">
-              <FaUpload className="inline-block mr-2 mb-1" />
-              上传合约文件
-              <input type="file" className="hidden" onChange={(e) => {
-                // 这里应该是处理文件上传的逻辑
-                console.log("File uploaded:", e.target.files?.[0]);
-              }} />
-            </label>
-            <AnimatedButton onClick={handleOptimize}>
-              <FaRocket className="inline-block mr-2 mb-1" />
-              开始优化
-            </AnimatedButton>
-          </div>
-          {showError && (
-            <motion.p
-              className="text-red-500 text-center mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+          <div className="w-1/2">
+            <SyntaxHighlighter
+              language="solidity"
+              style={atomOneDark}
+              showLineNumbers={true}
+              customStyle={{
+                height: '400px',
+                borderRadius: '0.5rem',
+                fontSize: '14px',
+              }}
             >
-              请输入或上传合约代码
-            </motion.p>
-          )}
+              {contractCode}
+            </SyntaxHighlighter>
+          </div>
+          <div className="w-1/2">
+            <SyntaxHighlighter
+              language="solidity"
+              style={atomOneDark}
+              showLineNumbers={true}
+              customStyle={{
+                height: '400px',
+                borderRadius: '0.5rem',
+                fontSize: '14px',
+              }}
+            >
+              {optimizedCode}
+            </SyntaxHighlighter>
+          </div>
         </motion.div>
+        <div className="flex justify-between w-full">
+          <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">
+            <FaUpload className="inline-block mr-2 mb-1" />
+            上传合约文件
+            <input type="file" className="hidden" accept=".sol" onChange={handleFileUpload} />
+          </label>
+          <AnimatedButton onClick={handleOptimize}>
+            <FaRocket className="inline-block mr-2 mb-1" />
+            开始优化
+          </AnimatedButton>
+        </div>
+        {showError && (
+          <motion.p
+            className="text-red-500 text-center mt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            请输入或上传合约代码
+          </motion.p>
+        )}
 
         <motion.div 
           className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-12 w-full max-w-3xl mx-auto shadow-lg"

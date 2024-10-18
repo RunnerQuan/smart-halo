@@ -8,16 +8,28 @@ import { FaCopy, FaSync } from 'react-icons/fa';
 
 export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
-  const [isReoptimized, setIsReoptimized] = useState(false);
   const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
-  const leftRef = useRef(null);
-  const rightRef = useRef(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const leftTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const rightPreRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
-      if (leftRef.current && rightRef.current) {
-        rightRef.current.style.height = leftRef.current.style.height;
+      if (leftRef.current && rightRef.current && leftTextareaRef.current && rightPreRef.current) {
+        const windowHeight = window.innerHeight;
+        const navbarHeight = 80; // 估计的导航栏高度
+        const marginTop = 96; // 24px * 4 = 96px (mt-24)
+        const padding = 48; // 6 * 8 = 48px (p-6)
+        const headerHeight = 40; // 估计的标题高度
+        const availableHeight = windowHeight - navbarHeight - marginTop - padding * 2 - headerHeight;
+
+        const newHeight = `${availableHeight}px`;
+        leftTextareaRef.current.style.height = newHeight;
+        rightPreRef.current.style.height = newHeight;
+        leftRef.current.style.height = `${availableHeight + padding * 2 + headerHeight}px`;
+        rightRef.current.style.height = `${availableHeight + padding * 2 + headerHeight}px`;
       }
     };
 
@@ -38,16 +50,14 @@ export default function OptimizationDetails() {
   const handleReoptimize = () => {
     // 这里应该是重新优化的逻辑
     console.log("重新优化");
-    setIsReoptimized(true);
-    setTimeout(() => setIsReoptimized(false), 2000);
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
-      <div className="mt-12 w-full max-w-7xl mx-auto">
+      <div className="mt-24 w-full max-w-7xl mx-auto">
         <motion.h1 
-          className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+          className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -55,10 +65,10 @@ export default function OptimizationDetails() {
           优化详情
         </motion.h1>
 
-        <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
+        <div className="w-full flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
           <motion.div 
             ref={leftRef}
-            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col resize overflow-auto"
+            className="flex-1 bg-gray-800 rounded-lg p-6 relative flex flex-col"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -71,7 +81,8 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <textarea
-              className="w-full h-[calc(100vh-220px)] bg-gray-900 text-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              ref={leftTextareaRef}
+              className="w-full bg-gray-900 text-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
               value={originalCode}
               onChange={(e) => setOriginalCode(e.target.value)}
             ></textarea>
@@ -79,7 +90,7 @@ export default function OptimizationDetails() {
 
           <motion.div 
             ref={rightRef}
-            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col resize overflow-auto"
+            className="flex-1 bg-gray-800 rounded-lg p-6 relative flex flex-col"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -91,7 +102,10 @@ export default function OptimizationDetails() {
                 一键复制
               </AnimatedButton>
             </div>
-            <pre className="w-full h-[calc(100vh-220px)] bg-gray-900 text-gray-300 p-4 rounded-lg overflow-auto resize-none">
+            <pre
+              ref={rightPreRef}
+              className="w-full bg-gray-900 text-gray-300 p-4 rounded-lg overflow-auto resize-none"
+            >
               {optimizedCode}
             </pre>
           </motion.div>
@@ -105,17 +119,6 @@ export default function OptimizationDetails() {
             exit={{ opacity: 0, y: 50 }}
           >
             优化后代码已复制到剪贴板
-          </motion.div>
-        )}
-
-        {isReoptimized && (
-          <motion.div 
-            className="fixed bottom-8 right-8 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-          >
-            重新优化完成！
           </motion.div>
         )}
       </div>

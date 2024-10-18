@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AnimatedNavLink from './AnimatedNavLink';
 import { FaHome, FaCode, FaSearch, FaQuestionCircle } from 'react-icons/fa';
 
 const navItems = [

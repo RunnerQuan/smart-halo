@@ -50,7 +50,7 @@ export default function CustomOptimization() {
         >
           <textarea 
             className="w-full h-[400px] bg-gray-800 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="在此输入智能合约反编译输出代码..."
+            placeholder="在此输入智能合约代码..."
             value={contractCode}
             onChange={(e) => setContractCode(e.target.value)}
           ></textarea>
@@ -104,13 +104,13 @@ export default function CustomOptimization() {
           <h2 className="text-2xl font-semibold mb-8 text-purple-400 text-center">优化亮点</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "智能优化", desc: "基于依赖分析和大模型的优化，增强反编译精度", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
-              { title: "性能提升", desc: "显著提升变量类型恢复及合约属性识别的准确性", icon: <FaChartLine className="text-3xl mb-2 text-green-400" /> },
-              { title: "安全增强", desc: "优化反编译输出，助力漏洞检测", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
+              { title: "智能分析", desc: "AI驱动的代码分析，快速识别优化点", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
+              { title: "性能提升", desc: "显著降低Gas消耗，提高合约执行效率", icon: <FaChartLine className="text-3xl mb-2 text-green-400" /> },
+              { title: "安全增强", desc: "自动检测并修复潜在的安全漏洞", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="bg-gray-800 p-6 rounded-xl text-center flex flex-col items-center justify-center"
+                className="bg-gray-800 p-6 rounded-xl text-center"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >

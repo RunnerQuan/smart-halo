@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { FaHome, FaCode, FaSearch, FaQuestionCircle } from 'react-icons/fa';
+import AnimatedNavLink from './AnimatedNavLink';
+import { FaHome, FaCode, FaSearch, FaInfoCircle } from 'react-icons/fa';
 
 const navItems = [
   { name: '首页', href: '/', icon: <FaHome className="mr-2" /> },
   { name: '合约地址优化', href: '/contract-optimization', icon: <FaSearch className="mr-2" /> },
   { name: '自定义优化', href: '/custom-optimization', icon: <FaCode className="mr-2" /> },
-  { name: '使用教程', href: '/help', icon: <FaQuestionCircle className="mr-2" /> },
+  { name: '使用教程', href: '/help', icon: <FaInfoCircle className="mr-2" /> },
 ];
 
 export default function Navbar() {

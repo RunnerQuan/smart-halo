@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt } from 'react-icons/fa';
+import { FaCode, FaUpload, FaRocket, FaInfoCircle } from 'react-icons/fa';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
@@ -23,7 +24,7 @@ export default function CustomOptimization() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
-      <div className="mt-24 w-full max-w-7xl mx-auto flex flex-col items-center">
+      <div className="mt-24 w-full max-w-7xl mx-auto">
         <motion.h1 
           className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
@@ -39,28 +40,28 @@ export default function CustomOptimization() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          输入或上传智能合约反编译输出代码，获取优化后的反编译输出代码
+          输入或上传智能合约代码，获取优化建议和详细信息
         </motion.p>
 
         <motion.div 
-          className="w-full mx-auto mb-12"
+          className="w-full max-w-3xl mx-auto mb-12"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <textarea 
-            className="w-full h-[400px] bg-gray-800 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="在此输入智能合约反编译输出代码..."
+            className="w-full h-64 bg-gray-800 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="在此输入智能合约代码..."
             value={contractCode}
             onChange={(e) => setContractCode(e.target.value)}
           ></textarea>
           <div className="flex justify-between">
-            <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">
+            <label className="bg-purple-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors">
               <FaUpload className="inline-block mr-2 mb-1" />
               上传合约文件
               <input type="file" className="hidden" onChange={(e) => {
                 // 这里应该是处理文件上传的逻辑
-                console.log("File uploaded:", e.target.files?.[0]);
+                console.log("File uploaded:", e.target.files[0]);
               }} />
             </label>
             <AnimatedButton onClick={handleOptimize}>
@@ -81,7 +82,7 @@ export default function CustomOptimization() {
         </motion.div>
 
         <motion.div 
-          className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-12 w-full max-w-3xl mx-auto shadow-lg"
+          className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-12 max-w-3xl mx-auto shadow-lg"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -95,28 +96,31 @@ export default function CustomOptimization() {
           </p>
         </motion.div>
 
-        <motion.div
+        <motion.div 
           className="w-full max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.8 }}
         >
-          <h2 className="text-2xl font-semibold mb-8 text-purple-400 text-center">优化亮点</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <h2 className="text-2xl font-semibold mb-6 text-center text-purple-400">优化示例</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { title: "智能优化", desc: "基于依赖分析和大模型的优化，增强反编译精度", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
-              { title: "性能提升", desc: "显著提升变量类型恢复及合约属性识别的准确性", icon: <FaChartLine className="text-3xl mb-2 text-green-400" /> },
-              { title: "安全增强", desc: "优化反编译输出，助力漏洞检测", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
-            ].map((item, index) => (
+              { name: "示例合约A", desc: "展示了常见的优化模式" },
+              { name: "示例合约B", desc: "演示了高级优化技巧" },
+            ].map((example, index) => (
               <motion.div
                 key={index}
-                className="bg-gray-800 p-6 rounded-xl text-center flex flex-col items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
+                className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg overflow-hidden relative group text-center"
+                whileHover={{ scale: 1.03 }}
               >
-                {item.icon}
-                <h3 className="text-xl font-semibold mb-2 text-cyan-300">{item.title}</h3>
-                <p className="text-gray-300">{item.desc}</p>
+                <h3 className="text-lg font-semibold mb-2 text-cyan-300">{example.name}</h3>
+                <p className="text-gray-400 mb-4">{example.desc}</p>
+                <Link href="/optimization-details" passHref>
+                  <AnimatedButton className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-full text-sm hover:from-cyan-600 hover:to-blue-600 transition-all duration-300">
+                    <FaInfoCircle className="inline-block mr-2 mb-1" />
+                    查看详情
+                  </AnimatedButton>
+                </Link>
               </motion.div>
             ))}
           </div>

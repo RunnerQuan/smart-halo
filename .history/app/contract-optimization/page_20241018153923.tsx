@@ -82,7 +82,7 @@ export default function ContractOptimization() {
         >
           <h2 className="text-2xl font-semibold mb-4 text-purple-400 text-center">功能介绍</h2>
           <p className="mb-4 text-gray-300">
-          用户输入任意的智能合约地址，系统会从 Dedaub 平台上找到对应的合约，并对其进行反编译，生成反编译输出。随后，SmartHalo 工具会对该反编译输出进行深度优化，确保变量类型准确、合约属性恢复完整、方法边界清晰。
+          用户输入任意的智能合约地址，系统会从 Dedaub 平台上找到对应的合约，并对其进行反编译，生成反编译输出。随后，SmartHalo 工具会对该反编译输出进行深度优化，确保变量类型准确、合约属性恢复完整、方法边界清晰。通过这一功能，用户无需访问源代码或ABI，就可以轻松获取清晰、优化后的合约代码，便于理解和进一步分析。
           </p>
           <p className="text-gray-300">
             优化后，您可以查看该反编译输出的性能提升和相关信息。该工具帮助研究人员根据合约地址优化反编译输出，提高效率。
