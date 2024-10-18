@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
@@ -13,14 +13,14 @@ import 'prismjs/themes/prism-dark.css';
 export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimized, setIsReoptimized] = useState(false);
-  const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
+  const [originalCode, setOriginalCode] = useState('');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
 
   useEffect(() => {
     const storedCode = sessionStorage.getItem('contractCode');
     if (storedCode) {
       setOriginalCode(storedCode);
-      sessionStorage.removeItem('contractCode');
+      sessionStorage.removeItem('contractCode'); // 清除存储的代码
     }
   }, []);
 
@@ -63,7 +63,7 @@ export default function OptimizationDetails() {
                 重新优化
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
+            <div className="w-full h-[calc(100vh-300px)] overflow-auto">
               <Editor
                 value={originalCode}
                 onValueChange={code => setOriginalCode(code)}
@@ -73,7 +73,7 @@ export default function OptimizationDetails() {
                   fontFamily: '"Fira code", "Fira Mono", monospace',
                   fontSize: 14,
                   backgroundColor: 'transparent',
-                  minHeight: '100%',
+                  height: '100%',
                 }}
                 className="min-h-full"
                 textareaClassName="focus:outline-none"
@@ -94,7 +94,7 @@ export default function OptimizationDetails() {
                 一键复制
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
+            <div className="w-full h-[calc(100vh-300px)] overflow-auto">
               <Editor
                 value={optimizedCode}
                 onValueChange={code => setOptimizedCode(code)}
@@ -104,7 +104,7 @@ export default function OptimizationDetails() {
                   fontFamily: '"Fira code", "Fira Mono", monospace',
                   fontSize: 14,
                   backgroundColor: 'transparent',
-                  minHeight: '100%',
+                  height: '100%',
                 }}
                 className="min-h-full"
                 textareaClassName="focus:outline-none"

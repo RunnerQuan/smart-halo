@@ -1,27 +1,32 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCopy, FaSync } from 'react-icons/fa';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-dark.css';
 
 export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimized, setIsReoptimized] = useState(false);
   const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
 
   useEffect(() => {
-    const storedCode = sessionStorage.getItem('contractCode');
-    if (storedCode) {
-      setOriginalCode(storedCode);
-      sessionStorage.removeItem('contractCode');
-    }
+    const handleResize = () => {
+      if (leftRef.current && rightRef.current) {
+        rightRef.current.style.height = leftRef.current.style.height;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const handleCopy = () => {
@@ -31,6 +36,7 @@ export default function OptimizationDetails() {
   };
 
   const handleReoptimize = () => {
+    // 这里应该是重新优化的逻辑
     console.log("重新优化");
     setIsReoptimized(true);
     setTimeout(() => setIsReoptimized(false), 2000);
@@ -51,7 +57,8 @@ export default function OptimizationDetails() {
 
         <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
           <motion.div 
-            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col"
+            ref={leftRef}
+            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col resize overflow-auto"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -63,26 +70,16 @@ export default function OptimizationDetails() {
                 重新优化
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={originalCode}
-                onValueChange={code => setOriginalCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                  minHeight: '100%',
-                }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
-              />
-            </div>
+            <textarea
+              className="w-full h-[calc(100vh-220px)] bg-gray-900 text-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              value={originalCode}
+              onChange={(e) => setOriginalCode(e.target.value)}
+            ></textarea>
           </motion.div>
 
           <motion.div 
-            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col"
+            ref={rightRef}
+            className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col resize overflow-auto"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -94,23 +91,9 @@ export default function OptimizationDetails() {
                 一键复制
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={optimizedCode}
-                onValueChange={code => setOptimizedCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                  minHeight: '100%',
-                }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
-                readOnly
-              />
-            </div>
+            <pre className="w-full h-[calc(100vh-220px)] bg-gray-900 text-gray-300 p-4 rounded-lg overflow-auto resize-none">
+              {optimizedCode}
+            </pre>
           </motion.div>
         </div>
 

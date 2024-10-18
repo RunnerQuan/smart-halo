@@ -1,28 +1,49 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCopy, FaSync } from 'react-icons/fa';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-dark.css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimized, setIsReoptimized] = useState(false);
-  const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
+  const [originalCode, setOriginalCode] = useState('');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const storedCode = sessionStorage.getItem('contractCode');
+    // 从 localStorage 获取合约代码
+    const storedCode = localStorage.getItem('contractCode');
     if (storedCode) {
       setOriginalCode(storedCode);
-      sessionStorage.removeItem('contractCode');
     }
+
+    const handleResize = () => {
+      if (leftRef.current && rightRef.current) {
+        rightRef.current.style.height = `${leftRef.current.clientHeight}px`;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [originalCode]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(optimizedCode);
@@ -34,6 +55,10 @@ export default function OptimizationDetails() {
     console.log("重新优化");
     setIsReoptimized(true);
     setTimeout(() => setIsReoptimized(false), 2000);
+  };
+
+  const handleOriginalCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setOriginalCode(e.target.value);
   };
 
   return (
@@ -51,6 +76,7 @@ export default function OptimizationDetails() {
 
         <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
           <motion.div 
+            ref={leftRef}
             className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -63,25 +89,33 @@ export default function OptimizationDetails() {
                 重新优化
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
+            <div className="w-full h-[calc(100vh-220px)] overflow-hidden relative">
+              <textarea
+                ref={textareaRef}
+                className="w-full h-full bg-transparent text-transparent caret-white resize-none p-4 font-mono absolute top-0 left-0 z-10"
                 value={originalCode}
-                onValueChange={code => setOriginalCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                  minHeight: '100%',
-                }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
+                onChange={handleOriginalCodeChange}
+                placeholder="// 这里是原始反编译代码"
               />
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                customStyle={{
+                  margin: 0,
+                  padding: '1rem',
+                  height: '100%',
+                  backgroundColor: 'transparent',
+                }}
+                wrapLines={true}
+                showLineNumbers={true}
+              >
+                {originalCode || '// 这里是原始反编译代码'}
+              </SyntaxHighlighter>
             </div>
           </motion.div>
 
           <motion.div 
+            ref={rightRef}
             className="flex-1 bg-gray-800 rounded-lg p-4 relative flex flex-col"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -95,21 +129,18 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={optimizedCode}
-                onValueChange={code => setOptimizedCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                showLineNumbers
+                customStyle={{
+                  margin: 0,
+                  padding: '1rem',
                   backgroundColor: 'transparent',
-                  minHeight: '100%',
                 }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
-                readOnly
-              />
+              >
+                {optimizedCode}
+              </SyntaxHighlighter>
             </div>
           </motion.div>
         </div>

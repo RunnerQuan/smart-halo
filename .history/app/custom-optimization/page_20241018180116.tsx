@@ -71,7 +71,7 @@ export default function CustomOptimization() {
             <Editor
               value={contractCode}
               onValueChange={code => setContractCode(code)}
-              highlight={code => highlight(code, languages.js, 'javascript')}
+              highlight={code => highlight(code, languages.js)}
               padding={10}
               style={{
                 fontFamily: '"Fira code", "Fira Mono", monospace',

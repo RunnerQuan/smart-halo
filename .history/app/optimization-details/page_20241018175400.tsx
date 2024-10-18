@@ -1,27 +1,40 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCopy, FaSync } from 'react-icons/fa';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-dark.css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimized, setIsReoptimized] = useState(false);
-  const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
+  const [originalCode, setOriginalCode] = useState('');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
+  const leftEditorRef = useRef<HTMLDivElement>(null);
+  const rightEditorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedCode = sessionStorage.getItem('contractCode');
     if (storedCode) {
       setOriginalCode(storedCode);
-      sessionStorage.removeItem('contractCode');
+      sessionStorage.removeItem('contractCode'); // 清除存储的代码
     }
+
+    const handleResize = () => {
+      if (leftEditorRef.current && rightEditorRef.current) {
+        const height = `${window.innerHeight - 200}px`;
+        leftEditorRef.current.style.height = height;
+        rightEditorRef.current.style.height = height;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleCopy = () => {
@@ -63,21 +76,19 @@ export default function OptimizationDetails() {
                 重新优化
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={originalCode}
-                onValueChange={code => setOriginalCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
+            <div ref={leftEditorRef} className="w-full overflow-auto">
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                showLineNumbers={true}
+                wrapLines={true}
+                customStyle={{
                   fontSize: 14,
                   backgroundColor: 'transparent',
-                  minHeight: '100%',
                 }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
-              />
+              >
+                {originalCode}
+              </SyntaxHighlighter>
             </div>
           </motion.div>
 
@@ -94,22 +105,19 @@ export default function OptimizationDetails() {
                 一键复制
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={optimizedCode}
-                onValueChange={code => setOptimizedCode(code)}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
+            <div ref={rightEditorRef} className="w-full overflow-auto">
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                showLineNumbers={true}
+                wrapLines={true}
+                customStyle={{
                   fontSize: 14,
                   backgroundColor: 'transparent',
-                  minHeight: '100%',
                 }}
-                className="min-h-full"
-                textareaClassName="focus:outline-none"
-                readOnly
-              />
+              >
+                {optimizedCode}
+              </SyntaxHighlighter>
             </div>
           </motion.div>
         </div>

@@ -5,10 +5,8 @@ import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt } from 'react-icons/fa';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-dark.css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
@@ -21,7 +19,6 @@ export default function CustomOptimization() {
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    sessionStorage.setItem('contractCode', contractCode);
     window.location.href = '/optimization-details';
   };
 
@@ -68,20 +65,19 @@ export default function CustomOptimization() {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-4 overflow-auto">
-            <Editor
-              value={contractCode}
-              onValueChange={code => setContractCode(code)}
-              highlight={code => highlight(code, languages.js, 'javascript')}
-              padding={10}
-              style={{
-                fontFamily: '"Fira code", "Fira Mono", monospace',
-                fontSize: 14,
+            <SyntaxHighlighter
+              language="javascript"
+              style={vscDarkPlus}
+              showLineNumbers
+              customStyle={{
+                margin: 0,
+                padding: '1rem',
                 backgroundColor: 'transparent',
-                minHeight: '100%',
+                height: '100%',
               }}
-              className="min-h-full"
-              textareaClassName="focus:outline-none"
-            />
+            >
+              {contractCode || '// 在此输入智能合约反编译输出代码...'}
+            </SyntaxHighlighter>
           </div>
           <div className="flex justify-between">
             <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">

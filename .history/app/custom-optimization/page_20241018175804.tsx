@@ -1,19 +1,14 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt } from 'react-icons/fa';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-dark.css';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
   const [showError, setShowError] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleOptimize = () => {
     if (!contractCode.trim()) {
@@ -21,22 +16,8 @@ export default function CustomOptimization() {
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    sessionStorage.setItem('contractCode', contractCode);
+    // 这里应该是跳转到优化详情页的逻辑
     window.location.href = '/optimization-details';
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.name.endsWith('.sol')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setContractCode(content);
-      };
-      reader.readAsText(file);
-    } else {
-      alert('请上传.sol文件');
-    }
   };
 
   return (
@@ -67,33 +48,20 @@ export default function CustomOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="w-full h-[400px] bg-gray-800 rounded-lg mb-4 overflow-auto">
-            <Editor
-              value={contractCode}
-              onValueChange={code => setContractCode(code)}
-              highlight={code => highlight(code, languages.js, 'javascript')}
-              padding={10}
-              style={{
-                fontFamily: '"Fira code", "Fira Mono", monospace',
-                fontSize: 14,
-                backgroundColor: 'transparent',
-                minHeight: '100%',
-              }}
-              className="min-h-full"
-              textareaClassName="focus:outline-none"
-            />
-          </div>
+          <textarea 
+            className="w-full h-[400px] bg-gray-800 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="在此输入智能合约反编译输出代码..."
+            value={contractCode}
+            onChange={(e) => setContractCode(e.target.value)}
+          ></textarea>
           <div className="flex justify-between">
             <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">
               <FaUpload className="inline-block mr-2 mb-1" />
               上传合约文件
-              <input
-                type="file"
-                className="hidden"
-                accept=".sol"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-              />
+              <input type="file" className="hidden" onChange={(e) => {
+                // 这里应该是处理文件上传的逻辑
+                console.log("File uploaded:", e.target.files?.[0]);
+              }} />
             </label>
             <AnimatedButton onClick={handleOptimize}>
               <FaRocket className="inline-block mr-2 mb-1" />
