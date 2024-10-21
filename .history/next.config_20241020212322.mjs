@@ -1,10 +1,16 @@
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {};
+
+// export default nextConfig;
+
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://172.18.197.84:6666/:path*', // 确保这是正确的后端地址和端口
+        destination: 'http://172.18.197.84:6667/:path*',
       },
     ];
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
@@ -11,13 +11,22 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
 
+// 实现一个带超时的 fetch 函数
+const fetchWithTimeout = (url, options, timeout = 300000) => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('请求超时')), timeout)
+    )
+  ]);
+};
+
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
   const [showError, setShowError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
 
   const handleOptimize = useCallback(async () => {
     if (!contractCode.trim()) {
@@ -28,13 +37,16 @@ export default function CustomOptimization() {
     setIsLoading(true);
     try {
       console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
+      const response = await fetchWithTimeout('/api/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ code: contractCode }),
-      });
+      }, 300000); // 5分钟超时
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -43,56 +55,54 @@ export default function CustomOptimization() {
       }
 
       const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
+      console.log('Received data:', data);
+
+      if (data.status === 'processing') {
+        // 如果后端返回处理中状态，开始轮询
+        await pollForResult(data.taskId);
+      } else {
+        // 直接处理结果
+        handleOptimizationResult(data);
+      }
     } catch (error) {
       console.error('Detailed error:', error);
       alert(`优化过程中出现错误: ${error.message}`);
+    } finally {
       setIsLoading(false);
     }
-  }, [contractCode]);
+  }, [contractCode, router]);
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+  const pollForResult = async (taskId) => {
+    while (true) {
+      await new Promise(resolve => setTimeout(resolve, 5000)); // 每5秒轮询一次
+      const response = await fetchWithTimeout('/api/check_status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ taskId }),
+      });
 
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
       }
-    };
 
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
+      const data = await response.json();
+      if (data.status === 'completed') {
+        handleOptimizationResult(data);
+        break;
+      } else if (data.status === 'failed') {
+        throw new Error('优化处理失败');
+      }
+      // 如果状态仍然是 'processing'，继续轮询
     }
+  };
 
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractCode, router]);
+  const handleOptimizationResult = (data) => {
+    sessionStorage.setItem('originalCode', contractCode);
+    sessionStorage.setItem('optimizedCode', data.processed_code);
+    router.push('/optimization-details');
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

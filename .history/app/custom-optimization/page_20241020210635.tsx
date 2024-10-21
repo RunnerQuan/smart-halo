@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import io from 'socket.io-client';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
@@ -17,82 +18,46 @@ export default function CustomOptimization() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
+  const [socket, setSocket] = useState<any>(null);
 
-  const handleOptimize = useCallback(async () => {
+  useEffect(() => {
+    // 连接到后端的 Socket.IO 服务器
+    const newSocket = io('http://localhost:6666'); // 请确保这里的地址与后端的地址一致
+    setSocket(newSocket);
+
+    // 在组件卸载时断开连接
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  const handleOptimize = useCallback(() => {
     if (!contractCode.trim()) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    setIsLoading(true);
-    try {
+
+    if (socket) {
+      setIsLoading(true);
       console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: contractCode }),
+      socket.emit('process_code', { code: contractCode });
+
+      socket.on('response', (data: any) => {
+        console.log('Received data:', data);
+        sessionStorage.setItem('originalCode', contractCode);
+        sessionStorage.setItem('optimizedCode', data.processed_code);
+        setIsLoading(false);
+        router.push('/optimization-details');
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
-    } catch (error) {
-      console.error('Detailed error:', error);
-      alert(`优化过程中出现错误: ${error.message}`);
-      setIsLoading(false);
+      socket.on('error', (error: any) => {
+        console.error('Error response:', error);
+        alert(`优化过程中出现错误: ${error.error}`);
+        setIsLoading(false);
+      });
     }
-  }, [contractCode]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractCode, router]);
+  }, [contractCode, router, socket]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

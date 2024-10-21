@@ -16,83 +16,66 @@ export default function CustomOptimization() {
   const [showError, setShowError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [optimizationStatus, setOptimizationStatus] = useState('');
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
 
-  const handleOptimize = useCallback(async () => {
+  useEffect(() => {
+    // 建立WebSocket连接
+    const ws = new WebSocket('ws://' + window.location.host + '/ws');
+    
+    ws.onopen = () => {
+      console.log('WebSocket连接已建立');
+      setSocket(ws);
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'status') {
+        setOptimizationStatus(data.message);
+      } else if (data.type === 'result') {
+        handleOptimizationResult(data);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket错误:', error);
+      alert('连接错误，请刷新页面重试');
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket连接已关闭');
+      setSocket(null);
+    };
+
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, []);
+
+  const handleOptimize = useCallback(() => {
     if (!contractCode.trim()) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-    setIsLoading(true);
-    try {
-      console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: contractCode }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
-    } catch (error) {
-      console.error('Detailed error:', error);
-      alert(`优化过程中出现错误: ${error.message}`);
-      setIsLoading(false);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'optimize', code: contractCode }));
+      setIsLoading(true);
+      setOptimizationStatus('开始优化...');
+    } else {
+      alert('WebSocket连接未建立，请刷新页面重试');
     }
-  }, [contractCode]);
+  }, [contractCode, socket]);
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractCode, router]);
+  const handleOptimizationResult = (data) => {
+    setIsLoading(false);
+    sessionStorage.setItem('originalCode', contractCode);
+    sessionStorage.setItem('optimizedCode', data.result);
+    router.push('/optimization-details');
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -164,9 +147,9 @@ export default function CustomOptimization() {
                 onChange={handleFileUpload}
               />
             </label>
-            <AnimatedButton onClick={handleOptimize} disabled={isLoading}>
+            <AnimatedButton onClick={handleOptimize} disabled={isLoading || !socket}>
               {isLoading ? (
-                <span>处理中...</span>
+                <span>{optimizationStatus}</span>
               ) : (
                 <>
                   <FaRocket className="inline-block mr-2 mb-1" />
@@ -213,7 +196,7 @@ export default function CustomOptimization() {
             {[
               { title: "智能优化", desc: "基于依赖分析和大模型的优化，增强反编译精度", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
               { title: "性能提升", desc: "显著提升变量类型恢复及合约属性识别的准确性", icon: <FaChartLine className="text-3xl mb-2 text-green-400" /> },
-              { title: "安全增强", desc: "优化反编译输出，助力漏洞检测", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
+              { title: "安全增强", desc: "��化反编译输出，助力漏洞检测", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
             ].map((item, index) => (
               <motion.div
                 key={index}

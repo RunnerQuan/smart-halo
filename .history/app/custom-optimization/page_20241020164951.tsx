@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
@@ -17,7 +17,6 @@ export default function CustomOptimization() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
 
   const handleOptimize = useCallback(async () => {
     if (!contractCode.trim()) {
@@ -27,8 +26,7 @@ export default function CustomOptimization() {
     }
     setIsLoading(true);
     try {
-      console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
+      const response = await fetch('http://172.18.197.84:6666/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,62 +35,20 @@ export default function CustomOptimization() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
+      sessionStorage.setItem('originalCode', contractCode);
+      sessionStorage.setItem('optimizedCode', data.processed_code);
+      router.push('/optimization-details');
     } catch (error) {
-      console.error('Detailed error:', error);
-      alert(`优化过程中出现错误: ${error.message}`);
+      console.error('Error:', error);
+      alert('优化过程中出现错误,请稍后再试');
+    } finally {
       setIsLoading(false);
     }
-  }, [contractCode]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractCode, router]);
+  }, [contractCode, router]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

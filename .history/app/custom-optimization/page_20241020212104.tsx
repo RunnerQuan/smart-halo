@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
@@ -10,6 +10,7 @@ import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
+import getConfig from 'next/config';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
@@ -17,24 +18,28 @@ export default function CustomOptimization() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
+  const { publicRuntimeConfig } = getConfig();
+  const API_URL = publicRuntimeConfig.API_URL || '/api';
 
   const handleOptimize = useCallback(async () => {
     if (!contractCode.trim()) {
       setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
+      setTimeout(() => setShowError(false), 3000000);
       return;
     }
     setIsLoading(true);
     try {
       console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
+      const response = await fetch(`${API_URL}/process_code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ code: contractCode }),
       });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -43,56 +48,17 @@ export default function CustomOptimization() {
       }
 
       const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
+      console.log('Received data:', data);
+      sessionStorage.setItem('originalCode', contractCode);
+      sessionStorage.setItem('optimizedCode', data.processed_code);
+      router.push('/optimization-details');
     } catch (error) {
       console.error('Detailed error:', error);
       alert(`优化过程中出现错误: ${error.message}`);
+    } finally {
       setIsLoading(false);
     }
-  }, [contractCode]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractCode, router]);
+  }, [contractCode, router]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
