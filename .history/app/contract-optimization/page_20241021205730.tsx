@@ -25,7 +25,6 @@ export default function ContractOptimization() {
     }
 
     setIsLoading(true);
-    setShowError(false);
 
     try {
       // 第一步：向本地的get.py发送请求获取反编译代码
@@ -46,9 +45,6 @@ export default function ContractOptimization() {
       const { decompiled_code } = responseData;
       console.log('Decompiled code:', decompiled_code);
 
-      // 添加这一行来保存原始的反编译代码
-      sessionStorage.setItem('originalCode', decompiled_code);
-
       // 第二步：将反编译代码发送给服务器进行优化
       const optimizeResponse = await fetch('/api/process_code', {
         method: 'POST',
@@ -65,14 +61,14 @@ export default function ContractOptimization() {
 
       const optimizeData = await optimizeResponse.json();
       setTaskId(optimizeData.task_id);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('处理请求时出错:', error);
       setShowError(true);
-      setErrorMessage(`处理请求时出错: ${error instanceof Error ? error.message : '未知错误'}`);
+      setErrorMessage(`处理请求时出错: ${error.message}`);
       setTimeout(() => setShowError(false), 5000);
+    } finally {
+      setIsLoading(false);
     }
-    // 注意：这里我们不再在finally块中设置isLoading为false
-    // 因为我们希望在任务完成之前保持加载状态
   }, [contractAddress]);
 
   useEffect(() => {
@@ -93,16 +89,13 @@ export default function ContractOptimization() {
             router.push('/optimization-details');
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
-            setShowError(true);
-            setErrorMessage(`优化失败: ${data.status}`);
+            alert(`优化失败: ${data.status}`);
             setIsLoading(false);
             setTaskId(null);
           }
           // 如果任务仍在进行中，继续轮询
         } catch (error) {
           console.error('Error checking task status:', error);
-          setShowError(true);
-          setErrorMessage('检查任务状态时出错');
           setIsLoading(false);
           setTaskId(null);
         }
@@ -130,7 +123,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"

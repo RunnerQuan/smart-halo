@@ -1,124 +1,26 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaSearch, FaEye } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
 
 export default function ContractOptimization() {
   const [contractAddress, setContractAddress] = useState('');
   const [showError, setShowError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [taskId, setTaskId] = useState<string | null>(null);
-  const router = useRouter();
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = () => {
     if (!contractAddress) {
       setShowError(true);
-      setErrorMessage('请输入合约地址');
       setTimeout(() => setShowError(false), 3000);
       return;
     }
-
-    setIsLoading(true);
-    setShowError(false);
-
-    try {
-      // 第一步：向本地的get.py发送请求获取反编译代码
-      const decompileResponse = await fetch('http://localhost:8080/decompile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ address: contractAddress }),
-      });
-
-      if (!decompileResponse.ok) {
-        throw new Error('获取反编译代码失败');
-      }
-      const responseData = await decompileResponse.json();
-      console.log('Decompile response data:', responseData);
-
-      const { decompiled_code } = responseData;
-      console.log('Decompiled code:', decompiled_code);
-
-      // 添加这一行来保存原始的反编译代码
-      sessionStorage.setItem('originalCode', decompiled_code);
-
-      // 第二步：将反编译代码发送给服务器进行优化
-      const optimizeResponse = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: decompiled_code }),
-      });
-
-      if (!optimizeResponse.ok) {
-        const errorData = await optimizeResponse.json().catch(() => ({}));
-        throw new Error(`优化请求失败: ${errorData.message || optimizeResponse.statusText}`);
-      }
-
-      const optimizeData = await optimizeResponse.json();
-      setTaskId(optimizeData.task_id);
-    } catch (error: unknown) {
-      console.error('处理请求时出错:', error);
-      setShowError(true);
-      setErrorMessage(`处理请求时出错: ${error instanceof Error ? error.message : '未知错误'}`);
-      setTimeout(() => setShowError(false), 5000);
-    }
-    // 注意：这里我们不再在finally块中设置isLoading为false
-    // 因为我们希望在任务完成之前保持加载状态
-  }, [contractAddress]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalAddress', contractAddress);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            setShowError(true);
-            setErrorMessage(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setShowError(true);
-          setErrorMessage('检查任务状态时出错');
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [taskId, contractAddress, router]);
+    // 这里应该是跳转到优化详情页的逻辑
+    window.location.href = '/optimization-details';
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
@@ -130,7 +32,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"
@@ -155,15 +57,9 @@ export default function ContractOptimization() {
               value={contractAddress}
               onChange={(e) => setContractAddress(e.target.value)}
             />
-            <AnimatedButton onClick={handleSearch} className="flex items-center justify-center" disabled={isLoading}>
-              {isLoading ? (
-                <span>处理中...</span>
-              ) : (
-                <>
-                  <FaSearch className="mr-2" />
-                  <span>搜索</span>
-                </>
-              )}
+            <AnimatedButton onClick={handleSearch} className="flex items-center justify-center">
+              <FaSearch className="mr-2" />
+              <span>搜索</span>
             </AnimatedButton>
           </div>
           {showError && (
@@ -173,7 +69,7 @@ export default function ContractOptimization() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {errorMessage}
+              请输入合约地址
             </motion.p>
           )}
         </motion.div>

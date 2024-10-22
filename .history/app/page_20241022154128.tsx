@@ -25,12 +25,12 @@ const titleAnimation = {
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
 
-      <div className="mt-16 w-full max-w-7xl mx-auto">
+      <div className="w-full max-w-7xl mx-auto">
         <AnimatedSection>
-          <section className="flex flex-col md:flex-row items-start justify-between mt-16">
+          <section className="flex flex-col md:flex-row items-center justify-between">
             <motion.div 
               className="md:w-1/2 text-left"
               initial={{ opacity: 0, y: 50 }}

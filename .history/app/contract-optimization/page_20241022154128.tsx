@@ -24,6 +24,13 @@ export default function ContractOptimization() {
       return;
     }
 
+    if (!contractAddress.startsWith('0x')) {
+      setShowError(true);
+      setErrorMessage('合约地址必须以"0x"开头');
+      setTimeout(() => setShowError(false), 3000);
+      return;
+    }
+
     setIsLoading(true);
     setShowError(false);
 
@@ -130,7 +137,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"

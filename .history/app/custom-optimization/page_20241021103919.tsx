@@ -10,89 +10,82 @@ import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
+import io, { Socket } from 'socket.io-client';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
   const [showError, setShowError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState('');
   const router = useRouter();
-  const [taskId, setTaskId] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-  const handleOptimize = useCallback(async () => {
+  const connectSocket = useCallback(() => {
+    const newSocket = io('http://172.18.197.84:6666', {
+      transports: ['websocket'],
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+      setIsLoading(false);
+      alert('连接服务器失败，请稍后重试');
+    });
+
+    newSocket.on('progress', (data) => {
+      console.log('Progress:', data.message);
+      setProgress(data.message);
+    });
+
+    newSocket.on('response', (data) => {
+      console.log('Received response:', data);
+      if (data.processed_code) {
+        sessionStorage.setItem('originalCode', contractCode);
+        sessionStorage.setItem('optimizedCode', data.processed_code);
+        setIsLoading(false);
+        router.push('/optimization-details');
+      }
+      newSocket.disconnect();
+    });
+
+    newSocket.on('error', (error) => {
+      console.error('WebSocket error:', error);
+      alert(`优化过程中出现错误: ${error.error}`);
+      setIsLoading(false);
+      newSocket.disconnect();
+    });
+
+    setSocket(newSocket);
+    return newSocket;
+  }, [contractCode, router]);
+
+  const handleOptimize = useCallback(() => {
     if (!contractCode.trim()) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
       return;
     }
+
     setIsLoading(true);
-    try {
-      console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: contractCode }),
-      });
+    setProgress('正在连接服务器...');
+    const newSocket = connectSocket();
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
-    } catch (error) {
-      console.error('Detailed error:', error);
-      alert(`优化过程中出现错误: ${error.message}`);
-      setIsLoading(false);
-    }
-  }, [contractCode]);
+    newSocket.emit('process_code', { code: contractCode });
+    setProgress('开始处理代码...');
+    console.log('Sending request to backend with code:', contractCode);
+  }, [contractCode, connectSocket]);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
-    if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
-
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
+      if (socket) {
+        socket.disconnect();
       }
     };
-  }, [taskId, contractCode, router]);
+  }, [socket]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -119,7 +112,7 @@ export default function CustomOptimization() {
           transition={{ duration: 0.5 }}
         >
           <FaCode className="inline-block mr-2 mb-1" />
-          合约优化器
+          自定义优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl mx-auto"
@@ -183,6 +176,15 @@ export default function CustomOptimization() {
               exit={{ opacity: 0 }}
             >
               请输入或上传合约代码
+            </motion.p>
+          )}
+          {isLoading && (
+            <motion.p
+              className="text-green-500 text-center mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {progress}
             </motion.p>
           )}
         </motion.div>

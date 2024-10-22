@@ -119,7 +119,7 @@ export default function CustomOptimization() {
           transition={{ duration: 0.5 }}
         >
           <FaCode className="inline-block mr-2 mb-1" />
-          合约优化器
+          自定义优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl mx-auto"

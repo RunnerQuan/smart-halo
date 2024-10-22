@@ -130,7 +130,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"

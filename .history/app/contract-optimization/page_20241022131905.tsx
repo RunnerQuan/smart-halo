@@ -46,9 +46,6 @@ export default function ContractOptimization() {
       const { decompiled_code } = responseData;
       console.log('Decompiled code:', decompiled_code);
 
-      // 添加这一行来保存原始的反编译代码
-      sessionStorage.setItem('originalCode', decompiled_code);
-
       // 第二步：将反编译代码发送给服务器进行优化
       const optimizeResponse = await fetch('/api/process_code', {
         method: 'POST',
@@ -130,7 +127,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"

@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://172.18.197.84:2525/:path*', // 确保这是正确的后端地址和端口
+        destination: 'http://172.18.197.84:6666/:path*',
       },
     ];
   },

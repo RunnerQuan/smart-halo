@@ -16,82 +16,83 @@ export default function CustomOptimization() {
   const [showError, setShowError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState('');
   const router = useRouter();
   const [taskId, setTaskId] = useState<string | null>(null);
 
-  const handleOptimize = useCallback(async () => {
+  const handleOptimize = useCallback(() => {
     if (!contractCode.trim()) {
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
       return;
     }
+
     setIsLoading(true);
-    try {
-      console.log('Sending request to backend...');
-      const response = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: contractCode }),
+    setProgress('正在连接服务器...');
+
+    // 发送请求到后端以开始代码处理
+    fetch('http://172.18.197.84:6666/process_code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code: contractCode }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('请求失败');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTaskId(data.task_id);
+        setProgress('代码处理已开始，请等待结果...');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('连接服务器失败，请稍后重试');
+        setIsLoading(false);
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Received task ID:', data.task_id);
-      setTaskId(data.task_id);
-    } catch (error) {
-      console.error('Detailed error:', error);
-      alert(`优化过程中出现错误: ${error.message}`);
-      setIsLoading(false);
-    }
   }, [contractCode]);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const checkTaskStatus = async () => {
-      if (taskId) {
-        try {
-          const response = await fetch(`/api/task_status/${taskId}`);
-          const data = await response.json();
-
-          if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
-            setIsLoading(false);
-            setTaskId(null);
-            router.push('/optimization-details');
-          } else if (data.state === 'FAILURE') {
-            console.error('Task failed:', data.status);
-            alert(`优化失败: ${data.status}`);
-            setIsLoading(false);
-            setTaskId(null);
-          }
-          // 如果任务仍在进行中，继续轮询
-        } catch (error) {
-          console.error('Error checking task status:', error);
-          setIsLoading(false);
-          setTaskId(null);
-        }
-      }
-    };
-
     if (taskId) {
-      intervalId = setInterval(checkTaskStatus, 2000); // 每2秒检查一次任务状态
-    }
+      const interval = setInterval(() => {
+        // 定期轮询任务状态
+        fetch(`http://172.18.197.84:6666/task_status/${taskId}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('请求失败');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            setProgress(data.status);
+            if (data.status === '完成') {
+              setIsLoading(false);
+              sessionStorage.setItem('originalCode', contractCode);
+              // 假设处理后的代码已经存储在后端并可以通过相应的 API 获取
+              fetch(`http://172.18.197.84:6666/result/${taskId}`)
+                .then((response) => response.text())
+                .then((optimizedCode) => {
+                  sessionStorage.setItem('optimizedCode', optimizedCode);
+                  router.push('/optimization-details');
+                });
+              clearInterval(interval);
+            } else if (data.status.includes('错误')) {
+              setIsLoading(false);
+              clearInterval(interval);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            setIsLoading(false);
+            clearInterval(interval);
+          });
+      }, 3000);
 
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
+      return () => clearInterval(interval);
+    }
   }, [taskId, contractCode, router]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +120,7 @@ export default function CustomOptimization() {
           transition={{ duration: 0.5 }}
         >
           <FaCode className="inline-block mr-2 mb-1" />
-          合约优化器
+          自定义优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl mx-auto"
@@ -183,6 +184,15 @@ export default function CustomOptimization() {
               exit={{ opacity: 0 }}
             >
               请输入或上传合约代码
+            </motion.p>
+          )}
+          {isLoading && (
+            <motion.p
+              className="text-green-500 text-center mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {progress}
             </motion.p>
           )}
         </motion.div>

@@ -25,7 +25,6 @@ export default function ContractOptimization() {
     }
 
     setIsLoading(true);
-    setShowError(false);
 
     try {
       // 第一步：向本地的get.py发送请求获取反编译代码
@@ -40,17 +39,12 @@ export default function ContractOptimization() {
       if (!decompileResponse.ok) {
         throw new Error('获取反编译代码失败');
       }
-      const responseData = await decompileResponse.json();
-      console.log('Decompile response data:', responseData);
-
-      const { decompiled_code } = responseData;
-      console.log('Decompiled code:', decompiled_code);
-
-      // 添加这一行来保存原始的反编译代码
-      sessionStorage.setItem('originalCode', decompiled_code);
+      console.log('Decompile response:', decompileResponse);
+      
+      const { decompiled_code } = await decompileResponse.json();
 
       // 第二步：将反编译代码发送给服务器进行优化
-      const optimizeResponse = await fetch('/api/process_code', {
+      const optimizeResponse = await fetch('http://172.18.197.84:6666/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,20 +53,18 @@ export default function ContractOptimization() {
       });
 
       if (!optimizeResponse.ok) {
-        const errorData = await optimizeResponse.json().catch(() => ({}));
-        throw new Error(`优化请求失败: ${errorData.message || optimizeResponse.statusText}`);
+        throw new Error('优化请求失败');
       }
 
       const optimizeData = await optimizeResponse.json();
       setTaskId(optimizeData.task_id);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('处理请求时出错:', error);
       setShowError(true);
-      setErrorMessage(`处理请求时出错: ${error instanceof Error ? error.message : '未知错误'}`);
-      setTimeout(() => setShowError(false), 5000);
+      setErrorMessage('处理请求时出错，请稍后重试');
+      setTimeout(() => setShowError(false), 3000);
+      setIsLoading(false);
     }
-    // 注意：这里我们不再在finally块中设置isLoading为false
-    // 因为我们希望在任务完成之前保持加载状态
   }, [contractAddress]);
 
   useEffect(() => {
@@ -81,7 +73,7 @@ export default function ContractOptimization() {
     const checkTaskStatus = async () => {
       if (taskId) {
         try {
-          const response = await fetch(`/api/task_status/${taskId}`);
+          const response = await fetch(`http://172.18.197.84:6666/task_status/${taskId}`);
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {
@@ -93,16 +85,13 @@ export default function ContractOptimization() {
             router.push('/optimization-details');
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
-            setShowError(true);
-            setErrorMessage(`优化失败: ${data.status}`);
+            alert(`优化失败: ${data.status}`);
             setIsLoading(false);
             setTaskId(null);
           }
           // 如果任务仍在进行中，继续轮询
         } catch (error) {
           console.error('Error checking task status:', error);
-          setShowError(true);
-          setErrorMessage('检查任务状态时出错');
           setIsLoading(false);
           setTaskId(null);
         }
@@ -130,7 +119,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          链上合约优化
+          合约地址优化
         </motion.h1>
         <motion.p 
           className="text-xl mb-12 text-center max-w-2xl"

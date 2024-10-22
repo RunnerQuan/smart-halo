@@ -52,7 +52,7 @@ export default function OptimizationDetails() {
       }
 
       const data = await response.json();
-      setOptimizedCode(data.process_code); // 注意这里改为 data.result
+      setOptimizedCode(data.processed_code);
     } catch (error) {
       console.error('Error:', error);
       alert('重新优化过程中出现错误,请稍后再试');
@@ -102,7 +102,6 @@ export default function OptimizationDetails() {
                 }}
                 className="min-h-full"
                 textareaClassName="focus:outline-none"
-                readOnly
               />
             </div>
           </motion.div>
