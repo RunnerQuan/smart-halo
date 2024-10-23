@@ -25,12 +25,12 @@ const titleAnimation = {
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
 
-      <div className="mt-40 w-full max-w-7xl mx-auto">
+      <div className="w-full max-w-7xl mx-auto">
         <AnimatedSection>
-          <section className="flex flex-col md:flex-row items-start justify-between mt-16">
+          <section className="flex flex-col md:flex-row items-center justify-between">
             <motion.div 
               className="md:w-1/2 text-left"
               initial={{ opacity: 0, y: 50 }}
@@ -72,7 +72,7 @@ export default function Home() {
                 </Link>
               </div>
             </motion.div>
-            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center" style={{ marginLeft: '50px' }}>
+            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
               <Suspense fallback={
                 <div className="w-full h-[400px] flex items-center justify-center">
                   <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
@@ -131,10 +131,10 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                { address: "0x1234567890123456789012345678901234567890", info: "合约A的详细信息" },
-                { address: "0x5678901234567890123456789012345678901234", info: "合约B的详细信息" },
-                { address: "0x9abcdef012345678901234567890123456789012", info: "合约C的详细信息" },
-                { address: "0xfabcdef123456789012345678901234567890123", info: "合约D的详细信息" }
+                { address: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", info: "Uniswap V2: Router 2 - 去中心化交易协议的核心路由合约" },
+                { address: "0x6B175474E89094C44Da98b954EedeAC495271d0F", info: "DAI Stablecoin - 由MakerDAO发行的去中心化稳定币" },
+                { address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", info: "USD Coin (USDC) - Circle发行的中心化稳定币" },
+                { address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", info: "Tether USD (USDT) - 最广泛使用的稳定币之一" }
               ].map((contract, index) => (
                 <motion.div
                   key={index}

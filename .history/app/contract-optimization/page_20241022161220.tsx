@@ -71,9 +71,9 @@ export default function ContractOptimization() {
       setShowError(true);
       setErrorMessage(`处理请求时出错: ${error instanceof Error ? error.message : '未知错误'}`);
       setTimeout(() => setShowError(false), 5000);
+    } finally {
+      setIsLoading(false);  // 无论成功还是失败，都将isLoading设置为false
     }
-    // 注意：这里我们不再在finally块中设置isLoading为false
-    // 因为我们希望在任务完成之前保持加载状态
   }, [contractAddress]);
 
   useEffect(() => {

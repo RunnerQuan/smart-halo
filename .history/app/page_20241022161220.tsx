@@ -25,12 +25,12 @@ const titleAnimation = {
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
 
-      <div className="mt-40 w-full max-w-7xl mx-auto">
+      <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center flex-grow">
         <AnimatedSection>
-          <section className="flex flex-col md:flex-row items-start justify-between mt-16">
+          <section className="flex flex-col md:flex-row items-center justify-between">
             <motion.div 
               className="md:w-1/2 text-left"
               initial={{ opacity: 0, y: 50 }}
@@ -72,7 +72,7 @@ export default function Home() {
                 </Link>
               </div>
             </motion.div>
-            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center" style={{ marginLeft: '50px' }}>
+            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
               <Suspense fallback={
                 <div className="w-full h-[400px] flex items-center justify-center">
                   <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
@@ -97,7 +97,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
                 { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
+                { title: "精准优化反编译输��", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
                 { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div

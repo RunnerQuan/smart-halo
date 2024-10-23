@@ -28,7 +28,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
 
-      <div className="mt-40 w-full max-w-7xl mx-auto">
+      <div className="mt-16 w-full max-w-7xl mx-auto">
         <AnimatedSection>
           <section className="flex flex-col md:flex-row items-start justify-between mt-16">
             <motion.div 
@@ -72,7 +72,7 @@ export default function Home() {
                 </Link>
               </div>
             </motion.div>
-            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center" style={{ marginLeft: '50px' }}>
+            <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
               <Suspense fallback={
                 <div className="w-full h-[400px] flex items-center justify-center">
                   <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
