@@ -3,8 +3,8 @@ import { FaHome, FaTools, FaChartLine, FaBook, FaDatabase } from 'react-icons/fa
 
 const navItems = [
   { name: '首页', href: '/', icon: <FaHome className="mr-2" /> },
-  { name: '合约优化器', href: '/custom-optimization', icon: <FaChartLine className="mr-2" /> },
   { name: '链上合约优化', href: '/contract-optimization', icon: <FaTools className="mr-2" /> },
+  { name: '合约优化器', href: '/custom-optimization', icon: <FaChartLine className="mr-2" /> },
   { name: '合约库', href: '/library', icon: <FaDatabase className="mr-2" /> },
   { name: '使用教程', href: '/help', icon: <FaBook className="mr-2" /> },
 ];

@@ -18,6 +18,7 @@ export default function CustomOptimization() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [taskId, setTaskId] = useState<string | null>(null);
+  const [optimizationResult, setOptimizationResult] = useState<string | null>(null);
 
   const handleOptimize = useCallback(async () => {
     if (!contractCode.trim()) {
@@ -27,8 +28,7 @@ export default function CustomOptimization() {
     }
     setIsLoading(true);
     try {
-      console.log('Sending request to backend...');
-      const response = await fetch('http://localhost:2525/process_code', {
+      const response = await fetch('/api/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,17 +37,14 @@ export default function CustomOptimization() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`网络响应不正常: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('Received task ID:', data.task_id);
       setTaskId(data.task_id);
     } catch (error) {
-      console.error('详细错误:', error);
-      alert(`优化过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`);
+      console.error('优化过程中出现错误:', error);
+      alert(`优化过程中出现错误: ${error instanceof Error ? error.message : String(error)}`);
       setIsLoading(false);
     }
   }, [contractCode]);
@@ -58,27 +55,30 @@ export default function CustomOptimization() {
     const checkTaskStatus = async () => {
       if (taskId) {
         try {
-          const response = await fetch(`http://localhost:2525/task_status/${taskId}`);
+          const response = await fetch(`/api/task_status/${taskId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {
-            console.log('Task completed:', data.result);
-            sessionStorage.setItem('originalCode', contractCode);
-            sessionStorage.setItem('optimizedCode', data.result);
+            setOptimizationResult(data.result);
             setIsLoading(false);
             setTaskId(null);
-            router.push('/optimization-details');
+            clearInterval(intervalId);
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
             alert(`优化失败: ${data.status}`);
             setIsLoading(false);
             setTaskId(null);
+            clearInterval(intervalId);
           }
           // 如果任务仍在进行中，继续轮询
         } catch (error) {
-          console.error('Error checking task status:', error);
+          console.error('检查任务状态时出错:', error);
           setIsLoading(false);
           setTaskId(null);
+          clearInterval(intervalId);
         }
       }
     };
@@ -92,7 +92,7 @@ export default function CustomOptimization() {
         clearInterval(intervalId);
       }
     };
-  }, [taskId, contractCode, router]);
+  }, [taskId]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -228,6 +228,12 @@ export default function CustomOptimization() {
             ))}
           </div>
         </motion.div>
+        {optimizationResult && (
+          <div>
+            <h3>优化结果：</h3>
+            <pre>{optimizationResult}</pre>
+          </div>
+        )}
       </div>
     </main>
   );

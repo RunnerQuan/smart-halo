@@ -28,7 +28,7 @@ export default function CustomOptimization() {
     setIsLoading(true);
     try {
       console.log('Sending request to backend...');
-      const response = await fetch('http://localhost:2525/process_code', {
+      const response = await fetch('/api/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,15 +39,15 @@ export default function CustomOptimization() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
-        throw new Error(`网络响应不正常: ${response.status} ${response.statusText}`);
+        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
       console.log('Received task ID:', data.task_id);
       setTaskId(data.task_id);
     } catch (error) {
-      console.error('详细错误:', error);
-      alert(`优化过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`);
+      console.error('Detailed error:', error);
+      alert(`优化过程中出现错误: ${error.message}`);
       setIsLoading(false);
     }
   }, [contractCode]);
@@ -58,7 +58,7 @@ export default function CustomOptimization() {
     const checkTaskStatus = async () => {
       if (taskId) {
         try {
-          const response = await fetch(`http://localhost:2525/task_status/${taskId}`);
+          const response = await fetch(`/api/task_status/${taskId}`);
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {

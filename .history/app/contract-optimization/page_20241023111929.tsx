@@ -44,16 +44,14 @@ export default function ContractOptimization() {
       const responseData = await decompileResponse.json();
       console.log('Decompile response data:', responseData);
 
-      const { decompiled_code, source_code } = responseData;
+      const { decompiled_code } = responseData;
       console.log('Decompiled code:', decompiled_code);
-      console.log('Source code:', source_code);
 
-      // 保存反编译代码和源代码
-      sessionStorage.setItem('decompileCode', decompiled_code);
-      sessionStorage.setItem('sourceCode', source_code);
+      // 添加这一行来保存原始的反编译代码
+      sessionStorage.setItem('originalCode', decompiled_code);
 
-      // 第二步：将反编译代码发送给服务器进行优化（修改为与custom-optimization相同的后端地址）
-      const optimizeResponse = await fetch('http://localhost:2525/process_code', {
+      // 第二步：将反编译代码发送给服务器进行优化
+      const optimizeResponse = await fetch('/api/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,6 +72,8 @@ export default function ContractOptimization() {
       setErrorMessage(`处理请求时出错: ${error instanceof Error ? error.message : '未知错误'}`);
       setTimeout(() => setShowError(false), 5000);
     }
+    // 注意：这里我们不再在finally块中设置isLoading为false
+    // 因为我们希望在任务完成之前保持加载状态
   }, [contractAddress]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function ContractOptimization() {
     const checkTaskStatus = async () => {
       if (taskId) {
         try {
-          const response = await fetch(`http://localhost:2525/task_status/${taskId}`);
+          const response = await fetch(`/api/task_status/${taskId}`);
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {
@@ -91,7 +91,7 @@ export default function ContractOptimization() {
             sessionStorage.setItem('optimizedCode', data.result);
             setIsLoading(false);
             setTaskId(null);
-            router.push('/contract-optimization-details');
+            router.push('/optimization-details');
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
             setShowError(true);

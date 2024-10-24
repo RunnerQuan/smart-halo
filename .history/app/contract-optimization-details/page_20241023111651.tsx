@@ -4,29 +4,28 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCopy, FaSync } from 'react-icons/fa';
+import { FaCopy } from 'react-icons/fa';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 
-export default function OptimizationDetails() {
+export default function ContractOptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
-  const [isReoptimized, setIsReoptimized] = useState(false);
-  const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
+  const [decompileCode, setDecompileCode] = useState('// 这里是原始反编译代码');
   const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
 
   useEffect(() => {
-    const storedOriginalCode = sessionStorage.getItem('originalCode');
+    const storedDecompileCode = sessionStorage.getItem('decompileCode');
     const storedOptimizedCode = sessionStorage.getItem('optimizedCode');
-    if (storedOriginalCode) {
-      setOriginalCode(storedOriginalCode);
+    if (storedDecompileCode) {
+      setDecompileCode(storedDecompileCode);
     }
     if (storedOptimizedCode) {
       setOptimizedCode(storedOptimizedCode);
     }
     // 清除sessionStorage中的数据
-    sessionStorage.removeItem('originalCode');
+    sessionStorage.removeItem('decompileCode');
     sessionStorage.removeItem('optimizedCode');
   }, []);
 
@@ -34,31 +33,6 @@ export default function OptimizationDetails() {
     navigator.clipboard.writeText(optimizedCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  const handleReoptimize = async () => {
-    setIsReoptimized(true);
-    try {
-      const response = await fetch('/api/process_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: originalCode }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      setOptimizedCode(data.process_code);
-    } catch (error) {
-      console.error('Error:', error);
-      alert('重新优化过程中出现错误,请稍后再试');
-    } finally {
-      setTimeout(() => setIsReoptimized(false), 2000);
-    }
   };
 
   return (
@@ -71,7 +45,7 @@ export default function OptimizationDetails() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          优化详情
+          链上合约优化详情
         </motion.h1>
 
         <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
@@ -81,17 +55,11 @@ export default function OptimizationDetails() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold text-purple-400">反编译代码</h2>
-              <AnimatedButton onClick={handleReoptimize} className="flex items-center">
-                <FaSync className="mr-2" />
-                重新优化
-              </AnimatedButton>
-            </div>
+            <h2 className="text-2xl font-semibold text-purple-400 mb-4">反编译代码</h2>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
               <Editor
-                value={originalCode}
-                onValueChange={code => setOriginalCode(code)}
+                value={decompileCode}
+                onValueChange={code => setDecompileCode(code)}
                 highlight={code => highlight(code, languages.js, 'javascript')}
                 padding={10}
                 style={{
@@ -148,17 +116,6 @@ export default function OptimizationDetails() {
             exit={{ opacity: 0, y: 50 }}
           >
             优化后代码已复制到剪贴板
-          </motion.div>
-        )}
-
-        {isReoptimized && (
-          <motion.div 
-            className="fixed bottom-8 right-8 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-          >
-            重新优化完成！
           </motion.div>
         )}
       </div>
