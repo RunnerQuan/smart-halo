@@ -9,7 +9,6 @@ import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
-import { useSearchParams } from 'next/navigation';
 
 export default function ContractOptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
@@ -18,48 +17,28 @@ export default function ContractOptimizationDetails() {
   const [optimizedCode, setOptimizedCode] = useState('');
   const [activeTab, setActiveTab] = useState('decompile');
   const [isLoading, setIsLoading] = useState(true);
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const address = searchParams.get('address');
-      
-      if (address) {
-        try {
-          const response = await fetch(`http://172.18.197.84:2525/get_code/${address}`);
-          if (!response.ok) {
-            throw new Error('无法获取合约详情');
-          }
-          const data = await response.json();
-          setDecompileCode(data.decompiled_code);
-          setSourceCode(data.source_code);
-          setOptimizedCode(data.result_code);
-        } catch (error) {
-          console.error('获取合约详情时出错:', error);
-          // 这里可以添加错误处理逻辑，比如显示错误消息
-        }
-      } else {
-        // 如果没有地址参数，可以从 sessionStorage 中获取数据
-        const storedDecompileCode = sessionStorage.getItem('decompileCode');
-        const storedSourceCode = sessionStorage.getItem('sourceCode');
-        const storedOptimizedCode = sessionStorage.getItem('optimizedCode');
+      const storedDecompileCode = sessionStorage.getItem('decompileCode');
+      const storedSourceCode = sessionStorage.getItem('sourceCode');
+      const storedOptimizedCode = sessionStorage.getItem('optimizedCode');
 
-        if (storedDecompileCode) setDecompileCode(storedDecompileCode);
-        if (storedSourceCode) setSourceCode(storedSourceCode);
-        if (storedOptimizedCode) setOptimizedCode(storedOptimizedCode);
-        
-        // 清除sessionStorage中的数据
-        sessionStorage.removeItem('decompileCode');
-        sessionStorage.removeItem('sourceCode');
-        sessionStorage.removeItem('optimizedCode');
-      }
+      if (storedDecompileCode) setDecompileCode(storedDecompileCode);
+      if (storedSourceCode) setSourceCode(storedSourceCode);
+      if (storedOptimizedCode) setOptimizedCode(storedOptimizedCode);
+      
+      // 清除sessionStorage中的数据
+      sessionStorage.removeItem('decompileCode');
+      sessionStorage.removeItem('sourceCode');
+      sessionStorage.removeItem('optimizedCode');
       
       setIsLoading(false);
     };
 
     fetchData();
-  }, [searchParams]);
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(optimizedCode);

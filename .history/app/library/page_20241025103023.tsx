@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation';
 
 interface Contract {
   file_name: string;
-  date: string | null;
-  name: string | null;
+  date?: string;  // 使用可选属性，因为有些合约可能没有日期
+  name?: string;  // 使用可选属性，因为有些合约可能没有名称
 }
 
 export default function ContractLibrary() {
@@ -28,7 +28,7 @@ export default function ContractLibrary() {
           throw new Error('无法获取合约列表');
         }
         const data = await response.json();
-        console.log('Received contracts data:', data.files_info);
+        console.log('Received contracts data:', data.files_info); // 添加这行来查看接收到的数据
         setContracts(data.files_info);
         setFilteredContracts(data.files_info);
       } catch (error) {

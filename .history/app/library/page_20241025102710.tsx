@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation';
 
 interface Contract {
   file_name: string;
-  date: string | null;
-  name: string | null;
+  date: string;
+  name: string;
 }
 
 export default function ContractLibrary() {
@@ -28,7 +28,6 @@ export default function ContractLibrary() {
           throw new Error('无法获取合约列表');
         }
         const data = await response.json();
-        console.log('Received contracts data:', data.files_info);
         setContracts(data.files_info);
         setFilteredContracts(data.files_info);
       } catch (error) {
@@ -140,9 +139,7 @@ export default function ContractLibrary() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {contract.name || `合约 ${contract.file_name.substring(0, 6)}...`}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{contract.name || `合约 ${contract.file_name.substring(0, 6)}...`}</td>
                   <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">{contract.file_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{contract.date || '未知'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
