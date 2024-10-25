@@ -1,45 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCopy } from 'react-icons/fa';
+import Editor from 'react-simple-code-editor';
 import hljs from 'highlight.js/lib/core';
-import 'highlight.js/styles/vs2015.css';
+import 'highlight.js/styles/github-dark.css'; // 使用合适的主题
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { useSearchParams } from 'next/navigation';
 
-// 注册 Solidity 语言
+// 定义 Solidity 语言高亮
 hljsDefineSolidity(hljs);
-
-const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
-
-const highlightSolidityCode = (code: string) => {
-  // 步骤 1: 将 **code** 替换为特殊标记
-  let processedCode = code.replace(/\*\*(.*?)\*\*/g, `${CUSTOM_HIGHLIGHT_PLACEHOLDER}$1${CUSTOM_HIGHLIGHT_PLACEHOLDER}`);
-
-  // 步骤 2: 进行 Solidity 语法高亮
-  const highlightedCode = hljs.highlight(processedCode, { language: 'solidity' }).value;
-
-  // 步骤 3: 将特殊标记替换回自定义高亮样式
-  return highlightedCode.replace(
-    new RegExp(`${CUSTOM_HIGHLIGHT_PLACEHOLDER}(.*?)${CUSTOM_HIGHLIGHT_PLACEHOLDER}`, 'g'),
-    '<span class="custom-highlight">$1</span>'
-  );
-};
-
-const HighlightedCode = ({ code }: { code: string }) => {
-  const codeRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (codeRef.current) {
-      codeRef.current.innerHTML = highlightSolidityCode(code);
-    }
-  }, [code]);
-
-  return <code ref={codeRef} className="hljs language-solidity" />;
-};
 
 export default function ContractOptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
@@ -64,9 +37,7 @@ export default function ContractOptimizationDetails() {
           const data = await response.json();
           setDecompileCode(data.decompiled_code);
           setSourceCode(data.source_code);
-          // 删除第一行和最后一行
-          const lines = data.result_code.split('\n');
-          setOptimizedCode(lines.slice(1, -1).join('\n'));
+          setOptimizedCode(data.result_code);
         } catch (error) {
           console.error('获取合约详情时出错:', error);
         }
@@ -77,10 +48,7 @@ export default function ContractOptimizationDetails() {
 
         if (storedDecompileCode) setDecompileCode(storedDecompileCode);
         if (storedSourceCode) setSourceCode(storedSourceCode);
-        if (storedOptimizedCode) {
-          const lines = storedOptimizedCode.split('\n');
-          setOptimizedCode(lines.slice(1, -1).join('\n'));
-        }
+        if (storedOptimizedCode) setOptimizedCode(storedOptimizedCode);
         
         sessionStorage.removeItem('decompileCode');
         sessionStorage.removeItem('sourceCode');
@@ -93,6 +61,7 @@ export default function ContractOptimizationDetails() {
     fetchData();
   }, [searchParams]);
 
+  // 定义复制功能，在复制过程中移除 "**code**" 标记的星号
   const handleCopy = () => {
     const sanitizedCode = optimizedCode.replace(/\*\*(.*?)\*\*/g, '$1');
     navigator.clipboard.writeText(sanitizedCode);
@@ -100,18 +69,24 @@ export default function ContractOptimizationDetails() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const CustomSyntaxHighlighter = ({ code, language }: { code: string; language: string }) => {
-    return (
-      <pre className="syntax-highlighter">
-        <HighlightedCode code={code} />
-      </pre>
+  // 定义高亮函数，带有自定义样式，应用荧光背景和黑色字体
+  const highlightSolidityCode = (code: string) => {
+    // 首先处理 **code** 标记
+    const preProcessedCode = code.replace(
+      /\*\*(.*?)\*\*/g,
+      '<mark class="custom-highlight">$1</mark>'
     );
+
+    // 然后使用 highlight.js 进行语法高亮
+    const highlightedCode = hljs.highlight(preProcessedCode, { language: 'solidity' }).value;
+
+    return highlightedCode;
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
-      <div className="mt-12 w-full max-w-[95%] mx-auto">
+      <div className="mt-12 w-full max-w-7xl mx-auto">
         <motion.h1 
           className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
@@ -129,7 +104,7 @@ export default function ContractOptimizationDetails() {
             transition={{ duration: 0.5 }}
           >
             <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
-            <p className="ml-4 text-xl">正在加载合约中...</p>
+            <p className="ml-4 text-xl">正在加载合约数据...</p>
           </motion.div>
         ) : (
           <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
@@ -156,9 +131,23 @@ export default function ContractOptimizationDetails() {
                 </div>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-                <CustomSyntaxHighlighter
-                  code={activeTab === 'decompile' ? decompileCode : sourceCode}
-                  language="solidity"
+                <Editor
+                  value={activeTab === 'decompile' ? decompileCode : sourceCode}
+                  onValueChange={() => {}}
+                  highlight={highlightSolidityCode}
+                  padding={10}
+                  style={{
+                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    minHeight: '100%',
+                    width: '100%',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                  }}
+                  className="min-h-full"
+                  textareaClassName="focus:outline-none"
+                  readOnly
                 />
               </div>
             </motion.div>
@@ -177,9 +166,23 @@ export default function ContractOptimizationDetails() {
                 </AnimatedButton>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-                <CustomSyntaxHighlighter
-                  code={optimizedCode}
-                  language="solidity"
+                <Editor
+                  value={optimizedCode}
+                  onValueChange={() => {}}
+                  highlight={highlightSolidityCode}
+                  padding={10}
+                  style={{
+                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    minHeight: '100%',
+                    width: '100%',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                  }}
+                  className="min-h-full"
+                  textareaClassName="focus:outline-none"
+                  readOnly
                 />
               </div>
             </motion.div>
@@ -199,31 +202,25 @@ export default function ContractOptimizationDetails() {
       </div>
       <style jsx global>{`
         .custom-highlight {
-          background-color: yellow !important;
-          color: black !important;
-          padding: 0 4px;  // 减小上下内边距
+          background-color: yellow;
+          color: black;
+          padding: 2px 4px;
           border-radius: 3px;
-          display: inline;  // 改为 inline 以减少高度
-          line-height: 1.2;  // 调整行高
         }
-        .syntax-highlighter {
-          font-family: 'Fira Code', monospace;
-          font-size: 14px;
-          line-height: 1.5;
-          overflow-x: auto;
-          background-color: transparent !important;
-          width: 100%; /* 确保代码框占满容器宽度 */
-          max-height: calc(100vh - 220px); /* 限制最大高度 */
-          overflow: auto;
+        .hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-name, .hljs-tag {
+          color: #569cd6;
         }
-        .syntax-highlighter code {
-          background-color: transparent !important;
+        .hljs-string, .hljs-title, .hljs-section, .hljs-attribute, .hljs-literal, .hljs-template-tag, .hljs-template-variable, .hljs-type, .hljs-addition {
+          color: #ce9178;
         }
-        /* 确保自定义高亮样式优先级高于 highlight.js 样式 */
-        .hljs .custom-highlight,
-        .hljs .custom-highlight * {
-          background-color: yellow !important;
-          color: black !important;
+        .hljs-comment, .hljs-quote, .hljs-deletion, .hljs-meta {
+          color: #6a9955;
+        }
+        .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-title, .hljs-section, .hljs-doctag, .hljs-type, .hljs-name, .hljs-strong {
+          font-weight: bold;
+        }
+        .hljs-emphasis {
+          font-style: italic;
         }
       `}</style>
     </main>

@@ -10,6 +10,7 @@ import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 
+// 注册 Solidity 语言
 hljsDefineSolidity(hljs);
 
 const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
@@ -33,22 +34,13 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
     }
   }, [editableCode]);
 
-  const handleInput = useCallback(() => {
-    if (codeRef.current) {
-      const newCode = codeRef.current.textContent || '';
-      setEditableCode(newCode);
-      if (onCodeChange) {
-        onCodeChange(newCode);
-      }
+  const handleInput = (event: React.FormEvent<HTMLPreElement>) => {
+    const newCode = event.currentTarget.textContent || '';
+    setEditableCode(newCode);
+    if (onCodeChange) {
+      onCodeChange(newCode);
     }
-  }, [onCodeChange]);
-
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLPreElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.execCommand('insertLineBreak');
-    }
-  }, []);
+  };
 
   return (
     <pre
@@ -56,7 +48,6 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
       className="hljs language-solidity"
       contentEditable={!!onCodeChange}
       onInput={handleInput}
-      onKeyDown={handleKeyDown}
       style={{ outline: 'none', caretColor: 'white' }}
       suppressContentEditableWarning={true}
     />
@@ -67,7 +58,7 @@ export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimizing, setIsReoptimizing] = useState(false);
   const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
-  const [optimizedCode, setOptimizedCode] = useState('// **这里是优化后的代码**function main(){**token**}');
+  const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
   const [taskId, setTaskId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -185,7 +176,7 @@ export default function OptimizationDetails() {
                 )}
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
+            <div className="w-full h-[calc(100vh-300px)] overflow-auto syntax-highlighter">
               <HighlightedCode code={originalCode} onCodeChange={setOriginalCode} />
             </div>
           </motion.div>
@@ -203,7 +194,7 @@ export default function OptimizationDetails() {
                 一键复制
               </AnimatedButton>
             </div>
-            <div className="w-full h-[calc(100vh-220px)] overflow-auto">
+            <div className="w-full h-[calc(100vh-300px)] overflow-auto syntax-highlighter">
               <HighlightedCode code={optimizedCode} />
             </div>
           </motion.div>

@@ -10,6 +10,7 @@ import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 
+// 注册 Solidity 语言
 hljsDefineSolidity(hljs);
 
 const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
@@ -24,41 +25,28 @@ const highlightSolidityCode = (code: string) => {
 };
 
 const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: (code: string) => void }) => {
-  const codeRef = useRef<HTMLPreElement>(null);
-  const [editableCode, setEditableCode] = useState(code);
+  const codeRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (codeRef.current) {
-      codeRef.current.innerHTML = highlightSolidityCode(editableCode);
+      codeRef.current.innerHTML = highlightSolidityCode(code);
     }
-  }, [editableCode]);
+  }, [code]);
 
-  const handleInput = useCallback(() => {
-    if (codeRef.current) {
-      const newCode = codeRef.current.textContent || '';
-      setEditableCode(newCode);
-      if (onCodeChange) {
-        onCodeChange(newCode);
-      }
+  const handleInput = (event: React.FormEvent<HTMLPreElement>) => {
+    const newCode = event.currentTarget.textContent || '';
+    if (onCodeChange) {
+      onCodeChange(newCode);
     }
-  }, [onCodeChange]);
-
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLPreElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.execCommand('insertLineBreak');
-    }
-  }, []);
+  };
 
   return (
     <pre
-      ref={codeRef}
+      ref={codeRef as React.RefObject<HTMLPreElement>}
       className="hljs language-solidity"
       contentEditable={!!onCodeChange}
       onInput={handleInput}
-      onKeyDown={handleKeyDown}
-      style={{ outline: 'none', caretColor: 'white' }}
-      suppressContentEditableWarning={true}
+      style={{ outline: 'none' }}
     />
   );
 };
@@ -67,7 +55,7 @@ export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimizing, setIsReoptimizing] = useState(false);
   const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
-  const [optimizedCode, setOptimizedCode] = useState('// **这里是优化后的代码**function main(){**token**}');
+  const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
   const [taskId, setTaskId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -80,9 +68,7 @@ export default function OptimizationDetails() {
   }, []);
 
   const handleCopy = () => {
-    // 移除 **code** 中的 ** 符号
-    const sanitizedCode = optimizedCode.replace(/\*\*(.*?)\*\*/g, '$1');
-    navigator.clipboard.writeText(sanitizedCode);
+    navigator.clipboard.writeText(optimizedCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -236,20 +222,11 @@ export default function OptimizationDetails() {
           overflow-x: auto;
           background-color: transparent !important;
           width: 100%;
-          height: 100%;
+          max-height: calc(100vh - 220px);
+          overflow: auto;
         }
-        .syntax-highlighter pre {
+        .syntax-highlighter code {
           background-color: transparent !important;
-          padding: 0;
-          margin: 0;
-          height: 100%;
-          white-space: pre-wrap;
-          word-break: break-all;
-        }
-        .hljs {
-          background-color: transparent !important;
-          padding: 0;
-          height: 100%;
         }
         .hljs .custom-highlight,
         .hljs .custom-highlight * {

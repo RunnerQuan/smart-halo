@@ -21,20 +21,11 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-/* .language-solidity .hljs-keyword,
-.language-solidity .hljs-title,
-.language-solidity .hljs-built_in {
-  color: #569cd6;
+/* 自定义高亮规则 */
+.custom-highlight {
+  background-color: #FFFF00 !important; /* 荧光黄色背景 */
+  color: black !important; /* 黑色文字 */
+  padding: 0 4px; /* 添加 padding 确保文本不会紧贴边界 */
+  border-radius: 3px; /* 圆角 */
+  font-weight: bold;
 }
-
-.language-solidity .hljs-string {
-  color: #ce9178;
-}
-
-.language-solidity .hljs-number {
-  color: #b5cea8;
-}
-
-.language-solidity .hljs-comment {
-  color: #6a9955;
-} */

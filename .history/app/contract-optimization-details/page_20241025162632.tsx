@@ -111,7 +111,7 @@ export default function ContractOptimizationDetails() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
-      <div className="mt-12 w-full max-w-[95%] mx-auto">
+      <div className="mt-12 w-full max-w-7xl mx-auto">
         <motion.h1 
           className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
@@ -212,9 +212,6 @@ export default function ContractOptimizationDetails() {
           line-height: 1.5;
           overflow-x: auto;
           background-color: transparent !important;
-          width: 100%; /* 确保代码框占满容器宽度 */
-          max-height: calc(100vh - 220px); /* 限制最大高度 */
-          overflow: auto;
         }
         .syntax-highlighter code {
           background-color: transparent !important;

@@ -67,7 +67,7 @@ export default function OptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
   const [isReoptimizing, setIsReoptimizing] = useState(false);
   const [originalCode, setOriginalCode] = useState('// 这里是原始反编译代码');
-  const [optimizedCode, setOptimizedCode] = useState('// **这里是优化后的代码**function main(){**token**}');
+  const [optimizedCode, setOptimizedCode] = useState('// 这里是优化后的代码');
   const [taskId, setTaskId] = useState<string | null>(null);
 
   useEffect(() => {

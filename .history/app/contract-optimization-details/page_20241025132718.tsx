@@ -1,45 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaCopy } from 'react-icons/fa';
-import hljs from 'highlight.js/lib/core';
-import 'highlight.js/styles/vs2015.css';
-import hljsDefineSolidity from 'highlightjs-solidity';
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/themes/prism-dark.css';
 import { useSearchParams } from 'next/navigation';
-
-// 注册 Solidity 语言
-hljsDefineSolidity(hljs);
-
-const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
-
-const highlightSolidityCode = (code: string) => {
-  // 步骤 1: 将 **code** 替换为特殊标记
-  let processedCode = code.replace(/\*\*(.*?)\*\*/g, `${CUSTOM_HIGHLIGHT_PLACEHOLDER}$1${CUSTOM_HIGHLIGHT_PLACEHOLDER}`);
-
-  // 步骤 2: 进行 Solidity 语法高亮
-  const highlightedCode = hljs.highlight(processedCode, { language: 'solidity' }).value;
-
-  // 步骤 3: 将特殊标记替换回自定义高亮样式
-  return highlightedCode.replace(
-    new RegExp(`${CUSTOM_HIGHLIGHT_PLACEHOLDER}(.*?)${CUSTOM_HIGHLIGHT_PLACEHOLDER}`, 'g'),
-    '<span class="custom-highlight">$1</span>'
-  );
-};
-
-const HighlightedCode = ({ code }: { code: string }) => {
-  const codeRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (codeRef.current) {
-      codeRef.current.innerHTML = highlightSolidityCode(code);
-    }
-  }, [code]);
-
-  return <code ref={codeRef} className="hljs language-solidity" />;
-};
 
 export default function ContractOptimizationDetails() {
   const [isCopied, setIsCopied] = useState(false);
@@ -64,24 +34,22 @@ export default function ContractOptimizationDetails() {
           const data = await response.json();
           setDecompileCode(data.decompiled_code);
           setSourceCode(data.source_code);
-          // 删除第一行和最后一行
-          const lines = data.result_code.split('\n');
-          setOptimizedCode(lines.slice(1, -1).join('\n'));
+          setOptimizedCode(data.result_code);
         } catch (error) {
           console.error('获取合约详情时出错:', error);
+          // 这里可以添加错误处理逻辑，比如显示错误消息
         }
       } else {
+        // 如果没有地址参数，可以从 sessionStorage 中获取数据
         const storedDecompileCode = sessionStorage.getItem('decompileCode');
         const storedSourceCode = sessionStorage.getItem('sourceCode');
         const storedOptimizedCode = sessionStorage.getItem('optimizedCode');
 
         if (storedDecompileCode) setDecompileCode(storedDecompileCode);
         if (storedSourceCode) setSourceCode(storedSourceCode);
-        if (storedOptimizedCode) {
-          const lines = storedOptimizedCode.split('\n');
-          setOptimizedCode(lines.slice(1, -1).join('\n'));
-        }
+        if (storedOptimizedCode) setOptimizedCode(storedOptimizedCode);
         
+        // 清除sessionStorage中的数据
         sessionStorage.removeItem('decompileCode');
         sessionStorage.removeItem('sourceCode');
         sessionStorage.removeItem('optimizedCode');
@@ -94,24 +62,31 @@ export default function ContractOptimizationDetails() {
   }, [searchParams]);
 
   const handleCopy = () => {
-    const sanitizedCode = optimizedCode.replace(/\*\*(.*?)\*\*/g, '$1');
-    navigator.clipboard.writeText(sanitizedCode);
+    navigator.clipboard.writeText(optimizedCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const CustomSyntaxHighlighter = ({ code, language }: { code: string; language: string }) => {
-    return (
-      <pre className="syntax-highlighter">
-        <HighlightedCode code={code} />
-      </pre>
+  const highlightCode = (code: string) => {
+    // 首先使用 Prism 进行 JavaScript 语法高亮
+    const highlightedCode = highlight(code, languages.js, 'javascript');
+    
+    // // 然后处理 **code** 标记
+    // return highlightedCode.replace(
+    //   /\*\*(.*?)\*\*/g, 
+    //   '<span class="bg-yellow-300 text-black px-1 rounded">$1</span>'
+    // );
+    // 然后再为 **code** 标签应用自定义的荧光色高亮
+    highlightedCode = highlightedCode.replace(
+      /\*\*(.*?)\*\*/g,
+      '<span class="custom-highlight">$1</span>'
     );
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
-      <div className="mt-12 w-full max-w-[95%] mx-auto">
+      <div className="mt-12 w-full max-w-7xl mx-auto">
         <motion.h1 
           className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
@@ -129,7 +104,7 @@ export default function ContractOptimizationDetails() {
             transition={{ duration: 0.5 }}
           >
             <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
-            <p className="ml-4 text-xl">正在加载合约中...</p>
+            <p className="ml-4 text-xl">正在加载合约数据...</p>
           </motion.div>
         ) : (
           <div className="w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
@@ -156,9 +131,23 @@ export default function ContractOptimizationDetails() {
                 </div>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-                <CustomSyntaxHighlighter
-                  code={activeTab === 'decompile' ? decompileCode : sourceCode}
-                  language="solidity"
+                <Editor
+                  value={activeTab === 'decompile' ? decompileCode : sourceCode}
+                  onValueChange={() => {}}
+                  highlight={code => highlight(code, languages.js, 'javascript')}
+                  padding={10}
+                  style={{
+                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    minHeight: '100%',
+                    width: '100%',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                  }}
+                  className="min-h-full"
+                  textareaClassName="focus:outline-none"
+                  readOnly
                 />
               </div>
             </motion.div>
@@ -177,9 +166,23 @@ export default function ContractOptimizationDetails() {
                 </AnimatedButton>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-                <CustomSyntaxHighlighter
-                  code={optimizedCode}
-                  language="solidity"
+                <Editor
+                  value={optimizedCode}
+                  onValueChange={() => {}}
+                  highlight={highlightCode}
+                  padding={10}
+                  style={{
+                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    minHeight: '100%',
+                    width: '100%',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                  }}
+                  className="min-h-full"
+                  textareaClassName="focus:outline-none"
+                  readOnly
                 />
               </div>
             </motion.div>
@@ -197,35 +200,6 @@ export default function ContractOptimizationDetails() {
           </motion.div>
         )}
       </div>
-      <style jsx global>{`
-        .custom-highlight {
-          background-color: yellow !important;
-          color: black !important;
-          padding: 0 4px;  // 减小上下内边距
-          border-radius: 3px;
-          display: inline;  // 改为 inline 以减少高度
-          line-height: 1.2;  // 调整行高
-        }
-        .syntax-highlighter {
-          font-family: 'Fira Code', monospace;
-          font-size: 14px;
-          line-height: 1.5;
-          overflow-x: auto;
-          background-color: transparent !important;
-          width: 100%; /* 确保代码框占满容器宽度 */
-          max-height: calc(100vh - 220px); /* 限制最大高度 */
-          overflow: auto;
-        }
-        .syntax-highlighter code {
-          background-color: transparent !important;
-        }
-        /* 确保自定义高亮样式优先级高于 highlight.js 样式 */
-        .hljs .custom-highlight,
-        .hljs .custom-highlight * {
-          background-color: yellow !important;
-          color: black !important;
-        }
-      `}</style>
     </main>
   );
 }
