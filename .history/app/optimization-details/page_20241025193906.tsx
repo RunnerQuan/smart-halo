@@ -43,28 +43,6 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      const start = event.currentTarget.selectionStart;
-      const end = event.currentTarget.selectionEnd;
-
-      // 插入两个空格作为缩进
-      const newCode = editableCode.substring(0, start) + '  ' + editableCode.substring(end);
-      setEditableCode(newCode);
-      if (onCodeChange) {
-        onCodeChange(newCode);
-      }
-
-      // 移动光标到插入的空格之后
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
-        }
-      }, 0);
-    }
-  };
-
   useEffect(() => {
     if (preRef.current) {
       preRef.current.innerHTML = highlightSolidityCode(editableCode);
@@ -82,7 +60,6 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
         ref={textareaRef}
         value={editableCode}
         onChange={handleInput}
-        onKeyDown={handleKeyDown}
         onScroll={syncScroll}
         className="code-textarea"
         spellCheck="false"

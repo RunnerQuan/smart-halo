@@ -14,7 +14,7 @@ hljsDefineSolidity(hljs);
 
 const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
 
-const highlightSolidityCode = (code: string) => {
+const highlightSolidityCode = (code) => {
   let processedCode = code.replace(/\*\*(.*?)\*\*/g, `${CUSTOM_HIGHLIGHT_PLACEHOLDER}$1${CUSTOM_HIGHLIGHT_PLACEHOLDER}`);
   const highlightedCode = hljs.highlight(processedCode, { language: 'solidity' }).value;
   return highlightedCode.replace(
@@ -23,71 +23,79 @@ const highlightSolidityCode = (code: string) => {
   );
 };
 
-const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: (code: string) => void }) => {
+const HighlightedCode = ({ code, onCodeChange }) => {
+  const codeRef = useRef(null);
   const [editableCode, setEditableCode] = useState(code);
-  const preRef = useRef<HTMLPreElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const syncScroll = () => {
-    if (textareaRef.current && preRef.current) {
-      preRef.current.scrollTop = textareaRef.current.scrollTop;
-      preRef.current.scrollLeft = textareaRef.current.scrollLeft;
+  // 获取光标位置
+  const getCaretPosition = (element) => {
+    let caretOffset = 0;
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
     }
+    return caretOffset;
   };
 
-  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newCode = event.target.value;
-    setEditableCode(newCode);
-    if (onCodeChange) {
-      onCodeChange(newCode);
-    }
-  };
+  // 设置光标位置
+  const setCaretPosition = (element, offset) => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    let currentNode = element;
+    let charCount = 0;
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      const start = event.currentTarget.selectionStart;
-      const end = event.currentTarget.selectionEnd;
-
-      // 插入两个空格作为缩进
-      const newCode = editableCode.substring(0, start) + '  ' + editableCode.substring(end);
-      setEditableCode(newCode);
-      if (onCodeChange) {
-        onCodeChange(newCode);
-      }
-
-      // 移动光标到插入的空格之后
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+    while (currentNode) {
+      if (currentNode.nodeType === 3) {
+        const nextCharCount = charCount + currentNode.length;
+        if (nextCharCount >= offset) {
+          range.setStart(currentNode, offset - charCount);
+          break;
         }
-      }, 0);
+        charCount = nextCharCount;
+      }
+      currentNode = currentNode.nextSibling;
     }
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
+
+  const handleInput = useCallback(() => {
+    const caretPos = getCaretPosition(codeRef.current); // 保存光标位置
+    const newCode = codeRef.current.textContent || '';
+    setEditableCode(newCode);
+    if (onCodeChange) onCodeChange(newCode);
+
+    // 使用 setTimeout 确保内容更新后再恢复光标位置
+    setTimeout(() => setCaretPosition(codeRef.current, caretPos), 0);
+  }, [onCodeChange]);
+
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.execCommand('insertLineBreak'); // 支持换行
+    }
+  }, []);
 
   useEffect(() => {
-    if (preRef.current) {
-      preRef.current.innerHTML = highlightSolidityCode(editableCode);
+    if (codeRef.current) {
+      codeRef.current.innerHTML = highlightSolidityCode(editableCode);
     }
   }, [editableCode]);
 
   return (
-    <div className="code-editor-container">
-      <pre
-        ref={preRef}
-        className="hljs language-solidity code-content"
-        aria-hidden="true"
-      />
-      <textarea
-        ref={textareaRef}
-        value={editableCode}
-        onChange={handleInput}
-        onKeyDown={handleKeyDown}
-        onScroll={syncScroll}
-        className="code-textarea"
-        spellCheck="false"
-      />
-    </div>
+    <pre
+      ref={codeRef}
+      className="hljs language-solidity"
+      contentEditable={!!onCodeChange}
+      onInput={handleInput}
+      onKeyDown={handleKeyDown}
+      style={{ outline: 'none', caretColor: 'white', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+      suppressContentEditableWarning={true}
+    />
   );
 };
 
@@ -257,45 +265,6 @@ export default function OptimizationDetails() {
           display: inline;
           line-height: 1.2;
         }
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-        .code-editor-container pre,
-        .code-editor-container textarea {
-          font-family: 'Fira Code', monospace;
-          font-size: 14px;
-          line-height: 1.5;
-          margin: 0;
-          padding: 10px;
-          white-space: pre-wrap;
-          word-break: break-all;
-          overflow: auto;
-        }
-        .code-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          background-color: transparent !important;
-        }
-        .code-textarea {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          resize: none;
-          border: none;
-          background: transparent;
-          color: transparent;
-          caret-color: white;
-          outline: none;
-        }
         .syntax-highlighter {
           font-family: 'Fira Code', monospace;
           font-size: 14px;
@@ -304,6 +273,14 @@ export default function OptimizationDetails() {
           background-color: transparent !important;
           width: 100%;
           height: 100%;
+        }
+        .syntax-highlighter pre {
+          background-color: transparent !important;
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          white-space: pre-wrap;
+          word-break: break-all;
         }
         .hljs {
           background-color: transparent !important;

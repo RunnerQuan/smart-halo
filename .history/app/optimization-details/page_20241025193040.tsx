@@ -24,70 +24,42 @@ const highlightSolidityCode = (code: string) => {
 };
 
 const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: (code: string) => void }) => {
+  const codeRef = useRef<HTMLPreElement>(null);
   const [editableCode, setEditableCode] = useState(code);
-  const preRef = useRef<HTMLPreElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const syncScroll = () => {
-    if (textareaRef.current && preRef.current) {
-      preRef.current.scrollTop = textareaRef.current.scrollTop;
-      preRef.current.scrollLeft = textareaRef.current.scrollLeft;
+  useEffect(() => {
+    if (codeRef.current) {
+      codeRef.current.innerHTML = highlightSolidityCode(editableCode);
     }
-  };
+  }, [editableCode]);
 
-  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newCode = event.target.value;
-    setEditableCode(newCode);
-    if (onCodeChange) {
-      onCodeChange(newCode);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      const start = event.currentTarget.selectionStart;
-      const end = event.currentTarget.selectionEnd;
-
-      // 插入两个空格作为缩进
-      const newCode = editableCode.substring(0, start) + '  ' + editableCode.substring(end);
+  const handleInput = useCallback(() => {
+    if (codeRef.current) {
+      const newCode = codeRef.current.textContent || '';
       setEditableCode(newCode);
       if (onCodeChange) {
         onCodeChange(newCode);
       }
-
-      // 移动光标到插入的空格之后
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
-        }
-      }, 0);
     }
-  };
+  }, [onCodeChange]);
 
-  useEffect(() => {
-    if (preRef.current) {
-      preRef.current.innerHTML = highlightSolidityCode(editableCode);
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLPreElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.execCommand('insertLineBreak');
     }
-  }, [editableCode]);
+  }, []);
 
   return (
-    <div className="code-editor-container">
-      <pre
-        ref={preRef}
-        className="hljs language-solidity code-content"
-        aria-hidden="true"
-      />
-      <textarea
-        ref={textareaRef}
-        value={editableCode}
-        onChange={handleInput}
-        onKeyDown={handleKeyDown}
-        onScroll={syncScroll}
-        className="code-textarea"
-        spellCheck="false"
-      />
-    </div>
+    <pre
+      ref={codeRef}
+      className="hljs language-solidity"
+      contentEditable={!!onCodeChange}
+      onInput={handleInput}
+      onKeyDown={handleKeyDown}
+      style={{ outline: 'none', caretColor: 'white' }}
+      suppressContentEditableWarning={true}
+    />
   );
 };
 
@@ -257,45 +229,6 @@ export default function OptimizationDetails() {
           display: inline;
           line-height: 1.2;
         }
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-        .code-editor-container pre,
-        .code-editor-container textarea {
-          font-family: 'Fira Code', monospace;
-          font-size: 14px;
-          line-height: 1.5;
-          margin: 0;
-          padding: 10px;
-          white-space: pre-wrap;
-          word-break: break-all;
-          overflow: auto;
-        }
-        .code-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          background-color: transparent !important;
-        }
-        .code-textarea {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          resize: none;
-          border: none;
-          background: transparent;
-          color: transparent;
-          caret-color: white;
-          outline: none;
-        }
         .syntax-highlighter {
           font-family: 'Fira Code', monospace;
           font-size: 14px;
@@ -304,6 +237,14 @@ export default function OptimizationDetails() {
           background-color: transparent !important;
           width: 100%;
           height: 100%;
+        }
+        .syntax-highlighter pre {
+          background-color: transparent !important;
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          white-space: pre-wrap;
+          word-break: break-all;
         }
         .hljs {
           background-color: transparent !important;

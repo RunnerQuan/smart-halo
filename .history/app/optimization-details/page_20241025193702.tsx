@@ -43,28 +43,6 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      const start = event.currentTarget.selectionStart;
-      const end = event.currentTarget.selectionEnd;
-
-      // 插入两个空格作为缩进
-      const newCode = editableCode.substring(0, start) + '  ' + editableCode.substring(end);
-      setEditableCode(newCode);
-      if (onCodeChange) {
-        onCodeChange(newCode);
-      }
-
-      // 移动光标到插入的空格之后
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
-        }
-      }, 0);
-    }
-  };
-
   useEffect(() => {
     if (preRef.current) {
       preRef.current.innerHTML = highlightSolidityCode(editableCode);
@@ -72,19 +50,44 @@ const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: 
   }, [editableCode]);
 
   return (
-    <div className="code-editor-container">
+    <div className="code-editor-container" style={{ position: 'relative' }}>
       <pre
         ref={preRef}
-        className="hljs language-solidity code-content"
+        className="hljs language-solidity"
+        style={{
+          margin: 0,
+          padding: '10px',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          background: 'transparent',
+        }}
         aria-hidden="true"
       />
       <textarea
         ref={textareaRef}
         value={editableCode}
         onChange={handleInput}
-        onKeyDown={handleKeyDown}
         onScroll={syncScroll}
-        className="code-textarea"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          margin: 0,
+          padding: '10px',
+          border: 'none',
+          resize: 'none',
+          background: 'transparent',
+          color: 'transparent',
+          caretColor: 'white',
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          lineHeight: 'inherit',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          overflow: 'auto',
+        }}
         spellCheck="false"
       />
     </div>
@@ -261,40 +264,13 @@ export default function OptimizationDetails() {
           position: relative;
           width: 100%;
           height: 100%;
-          overflow: hidden;
+          overflow: auto;
         }
         .code-editor-container pre,
         .code-editor-container textarea {
           font-family: 'Fira Code', monospace;
           font-size: 14px;
           line-height: 1.5;
-          margin: 0;
-          padding: 10px;
-          white-space: pre-wrap;
-          word-break: break-all;
-          overflow: auto;
-        }
-        .code-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          background-color: transparent !important;
-        }
-        .code-textarea {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          resize: none;
-          border: none;
-          background: transparent;
-          color: transparent;
-          caret-color: white;
-          outline: none;
         }
         .syntax-highlighter {
           font-family: 'Fira Code', monospace;
@@ -304,6 +280,14 @@ export default function OptimizationDetails() {
           background-color: transparent !important;
           width: 100%;
           height: 100%;
+        }
+        .syntax-highlighter pre {
+          background-color: transparent !important;
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          white-space: pre-wrap;
+          word-break: break-all;
         }
         .hljs {
           background-color: transparent !important;
