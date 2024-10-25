@@ -3,13 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
-import { FaSearch, FaCopy } from 'react-icons/fa';
+import { FaSearch, FaFileContract } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-
-interface Contract {
-  name: string;
-  address: string;
-}
 
 export default function ContractLibrary() {
   const [contracts, setContracts] = useState<string[]>([]);
@@ -64,20 +59,13 @@ export default function ContractLibrary() {
     }
   };
 
-  const copyToClipboard = (text: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(text).then(() => {
-      alert('地址已复制到剪贴板');
-    });
-  };
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-900 text-white font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-gradient-to-b from-[#1A1A1A] to-[#2D2D2D] text-white font-sans">
       <Navbar />
       <div className="mt-24 w-full max-w-7xl mx-auto">
         <motion.h1 
-          className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600"
-          initial={{ opacity: 0, y: -20 }}
+          className="text-5xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+          initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
@@ -85,7 +73,7 @@ export default function ContractLibrary() {
         </motion.h1>
 
         <motion.div 
-          className="mb-8 relative"
+          className="mb-12 relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -93,16 +81,16 @@ export default function ContractLibrary() {
           <input 
             type="text"
             placeholder="搜索合约地址..."
-            className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+            className="w-full bg-gray-800 text-white rounded-full px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 pl-12"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </motion.div>
 
         {showError && (
           <motion.p
-            className="text-red-500 text-center mb-4"
+            className="text-red-500 text-center mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
@@ -112,42 +100,37 @@ export default function ContractLibrary() {
         )}
 
         <motion.div 
-          className="bg-gray-800 rounded-lg overflow-hidden"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-700">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">合约名称</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">合约地址</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredContracts.map((address, index) => (
-                <motion.tr
-                  key={address}
-                  className="hover:bg-gray-700 cursor-pointer transition-colors duration-150 ease-in-out"
-                  onClick={() => handleViewDetails(address)}
-                  whileHover={{ scale: 1.01 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">合约 {address.substring(0, 6)}...</td>
-                  <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">{address}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <FaCopy 
-                      className="inline-block text-blue-400 hover:text-blue-300 cursor-pointer ml-2"
-                      onClick={(e) => copyToClipboard(address, e)}
-                    />
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+          {filteredContracts.map((address, index) => (
+            <motion.div
+              key={address}
+              className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleViewDetails(address)}
+            >
+              <div className="p-6">
+                <div className="absolute top-4 right-4">
+                  <FaFileContract className="text-2xl text-purple-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-cyan-300">合约地址</h3>
+                <p className="text-gray-300 font-mono text-sm mb-4 break-all">{address}</p>
+              </div>
+              <motion.div 
+                className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500 opacity-50"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              />
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </main>

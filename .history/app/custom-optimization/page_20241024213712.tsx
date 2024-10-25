@@ -128,7 +128,7 @@ export default function CustomOptimization() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          输入或上传智能合约反编译输出代码，获取优化后的反编译输出代码
+          输���或上传智能合约反编译输出代码，获取优化后的反编译输出代码
         </motion.p>
 
         <motion.div 

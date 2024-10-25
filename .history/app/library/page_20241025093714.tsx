@@ -3,13 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
-import { FaSearch, FaCopy } from 'react-icons/fa';
+import { FaSearch, FaFileContract, FaCopy } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-
-interface Contract {
-  name: string;
-  address: string;
-}
 
 export default function ContractLibrary() {
   const [contracts, setContracts] = useState<string[]>([]);
@@ -64,8 +59,12 @@ export default function ContractLibrary() {
     }
   };
 
-  const copyToClipboard = (text: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const getRandomColor = () => {
+    const colors = ['bg-purple-600', 'bg-blue-600', 'bg-green-600', 'bg-yellow-600', 'bg-red-600'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       alert('地址已复制到剪贴板');
     });
@@ -76,7 +75,7 @@ export default function ContractLibrary() {
       <Navbar />
       <div className="mt-24 w-full max-w-7xl mx-auto">
         <motion.h1 
-          className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600"
+          className="text-4xl font-bold mb-8 text-center text-white"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -93,7 +92,7 @@ export default function ContractLibrary() {
           <input 
             type="text"
             placeholder="搜索合约地址..."
-            className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+            className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -112,42 +111,48 @@ export default function ContractLibrary() {
         )}
 
         <motion.div 
-          className="bg-gray-800 rounded-lg overflow-hidden"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-700">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">合约名称</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">合约地址</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredContracts.map((address, index) => (
-                <motion.tr
-                  key={address}
-                  className="hover:bg-gray-700 cursor-pointer transition-colors duration-150 ease-in-out"
-                  onClick={() => handleViewDetails(address)}
-                  whileHover={{ scale: 1.01 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">合约 {address.substring(0, 6)}...</td>
-                  <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">{address}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+          {filteredContracts.map((address, index) => (
+            <motion.div
+              key={address}
+              className={`${getRandomColor()} rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleViewDetails(address)}
+            >
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-white">合约名称</h3>
+                  <div className="flex space-x-2">
+                    <FaFileContract className="text-xl text-white" />
                     <FaCopy 
-                      className="inline-block text-blue-400 hover:text-blue-300 cursor-pointer ml-2"
-                      onClick={(e) => copyToClipboard(address, e)}
+                      className="text-lg text-white cursor-pointer hover:text-yellow-300 transition-colors duration-200" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(address);
+                      }}
                     />
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+                <p className="text-white font-mono text-sm truncate">{address}</p>
+                <div className="mt-2 flex space-x-2">
+                  <span className="inline-block bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold text-white">
+                    #智能合约
+                  </span>
+                  <span className="inline-block bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold text-white">
+                    #区块链
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </main>

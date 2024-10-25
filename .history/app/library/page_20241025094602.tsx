@@ -12,8 +12,8 @@ interface Contract {
 }
 
 export default function ContractLibrary() {
-  const [contracts, setContracts] = useState<string[]>([]);
-  const [filteredContracts, setFilteredContracts] = useState<string[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [filteredContracts, setFilteredContracts] = useState<Contract[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,15 +24,19 @@ export default function ContractLibrary() {
       try {
         const response = await fetch('http://172.18.197.84:2525/list_source_files');
         if (!response.ok) {
-          throw new Error('无法获取合约地址列表');
+          throw new Error('无法获取合约列表');
         }
         const data = await response.json();
-        setContracts(data.file_names);
-        setFilteredContracts(data.file_names);
+        const contractList = data.file_names.map((address: string) => ({
+          name: `合约 ${address.substring(0, 6)}...`,
+          address: address
+        }));
+        setContracts(contractList);
+        setFilteredContracts(contractList);
       } catch (error) {
-        console.error('获取合约地址时出错:', error);
+        console.error('获取合约列表时出错:', error);
         setShowError(true);
-        setErrorMessage(`获取合约地址时出错: ${error instanceof Error ? error.message : '未知错误'}`);
+        setErrorMessage(`获取合约列表时出错: ${error instanceof Error ? error.message : '未知错误'}`);
       }
     };
 
@@ -41,7 +45,8 @@ export default function ContractLibrary() {
 
   useEffect(() => {
     const results = contracts.filter(contract =>
-      contract.toLowerCase().includes(searchTerm.toLowerCase())
+      contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contract.address.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredContracts(results);
   }, [searchTerm, contracts]);
@@ -92,7 +97,7 @@ export default function ContractLibrary() {
         >
           <input 
             type="text"
-            placeholder="搜索合约地址..."
+            placeholder="搜索合约名称或地址..."
             className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -126,22 +131,22 @@ export default function ContractLibrary() {
               </tr>
             </thead>
             <tbody>
-              {filteredContracts.map((address, index) => (
+              {filteredContracts.map((contract, index) => (
                 <motion.tr
-                  key={address}
+                  key={contract.address}
                   className="hover:bg-gray-700 cursor-pointer transition-colors duration-150 ease-in-out"
-                  onClick={() => handleViewDetails(address)}
+                  onClick={() => handleViewDetails(contract.address)}
                   whileHover={{ scale: 1.01 }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">合约 {address.substring(0, 6)}...</td>
-                  <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">{address}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{contract.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">{contract.address}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     <FaCopy 
                       className="inline-block text-blue-400 hover:text-blue-300 cursor-pointer ml-2"
-                      onClick={(e) => copyToClipboard(address, e)}
+                      onClick={(e) => copyToClipboard(contract.address, e)}
                     />
                   </td>
                 </motion.tr>
