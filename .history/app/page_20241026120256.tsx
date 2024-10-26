@@ -110,6 +110,41 @@ export default function Home() {
         </AnimatedSection>
 
         <AnimatedSection>
+          <section className="mt-32 w-full flex flex-col items-center">
+            <motion.h2 
+              className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+              initial="hidden"
+              animate="visible"
+              variants={titleAnimation}
+            >
+              工具特色
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
+                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
+                { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl shadow-lg border border-gray-700 hover:border-cyan-500 transition-all duration-300 text-center"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.2 }}
+                  whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+                >
+                  <div className="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full p-4 inline-block mb-6">
+                    <Image src={item.icon} alt={item.title} width={40} height={40} className="filter invert" />
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-4 text-cyan-300">{item.title}</h3>
+                  <p className="text-white">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        </AnimatedSection>
+
+        <AnimatedSection>
           <section className="mt-32 text-center w-full flex flex-col items-center">
             <motion.h2 
               className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
@@ -188,41 +223,6 @@ export default function Home() {
                     }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   />
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        </AnimatedSection>
-
-        <AnimatedSection>
-          <section className="mt-32 w-full flex flex-col items-center">
-            <motion.h2 
-              className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-              initial="hidden"
-              animate="visible"
-              variants={titleAnimation}
-            >
-              工具特色
-            </motion.h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl shadow-lg border border-gray-700 hover:border-cyan-500 transition-all duration-300 text-center"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
-                >
-                  <div className="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full p-4 inline-block mb-6">
-                    <Image src={item.icon} alt={item.title} width={40} height={40} className="filter invert" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-4 text-cyan-300">{item.title}</h3>
-                  <p className="text-white">{item.desc}</p>
                 </motion.div>
               ))}
             </div>

@@ -40,7 +40,7 @@ export default function Home() {
           throw new Error('无法获取合约列表');
         }
         const data = await response.json();
-        setContracts(data.files_info.slice(0, 9)); // 只取前9个合约
+        setContracts(data.files_info.slice(0, 8)); // 只取前8个合约
       } catch (error) {
         console.error('获取合约列表时出错:', error);
       }
@@ -110,91 +110,6 @@ export default function Home() {
         </AnimatedSection>
 
         <AnimatedSection>
-          <section className="mt-32 text-center w-full flex flex-col items-center">
-            <motion.h2 
-              className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-              initial="hidden"
-              animate="visible"
-              variants={titleAnimation}
-            >
-              示例合约
-            </motion.h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-              {contracts.map((contract, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-5 rounded-xl shadow-md overflow-hidden relative group"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02, boxShadow: "0 8px 16px rgba(0,0,0,0.2)" }}
-                >
-                  {/* 背景动画效果 */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-blue-500/5"
-                    animate={{
-                      background: [
-                        "linear-gradient(to right, rgba(6, 182, 212, 0.05), rgba(59, 130, 246, 0.05))",
-                        "linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(6, 182, 212, 0.05))",
-                        "linear-gradient(to right, rgba(6, 182, 212, 0.05), rgba(59, 130, 246, 0.05))",
-                      ],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  />
-
-                  {/* 顶部闪烁的点 */}
-                  <motion.div
-                    className="absolute top-2 right-2 w-2 h-2 rounded-full bg-cyan-500"
-                    animate={{
-                      opacity: [0, 1, 0],
-                      scale: [0.8, 1.2, 0.8],
-                    }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  />
-
-                  <h3 className="text-lg font-semibold mb-2 text-cyan-300 truncate">{contract.name || `合约 ${contract.file_name.substring(0, 6)}...`}</h3>
-                  
-                  {/* 合约地址背景动画 */}
-                  <motion.div 
-                    className="bg-black/20 rounded-lg p-2 mb-3 overflow-hidden relative"
-                    animate={{
-                      boxShadow: [
-                        "0 0 0 0 rgba(6, 182, 212, 0)",
-                        "0 0 0 4px rgba(6, 182, 212, 0.1)",
-                        "0 0 0 0 rgba(6, 182, 212, 0)",
-                      ],
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <p className="text-white font-mono text-xs whitespace-nowrap overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700">{contract.file_name}</p>
-                  </motion.div>
-
-                  <p className="text-gray-400 mb-4 text-xs">{contract.date || '未知时间'}</p>
-                  
-                  <Link href={{
-                    pathname: '/contract-optimization-details',
-                    query: { address: contract.file_name }
-                  }} passHref>
-                    <AnimatedButton className="w-auto px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-full hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-cyan-500/50">
-                      查看详情
-                    </AnimatedButton>
-                  </Link>
-
-                  {/* 底部动画线条 */}
-                  <motion.div
-                    className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500"
-                    animate={{
-                      width: ["0%", "100%", "0%"],
-                    }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        </AnimatedSection>
-
-        <AnimatedSection>
           <section className="mt-32 w-full flex flex-col items-center">
             <motion.h2 
               className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
@@ -206,7 +121,7 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
+                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
                 { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
                 { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
               ].map((item, index) => (
@@ -223,6 +138,46 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-semibold mb-4 text-cyan-300">{item.title}</h3>
                   <p className="text-white">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <section className="mt-32 text-center w-full flex flex-col items-center">
+            <motion.h2 
+              className="text-4xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+              initial="hidden"
+              animate="visible"
+              variants={titleAnimation}
+            >
+              示例合约
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {contracts.map((contract, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-lg overflow-hidden relative group hover:shadow-2xl transition-all duration-300"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.03 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <h3 className="text-2xl font-semibold mb-3 text-cyan-300">{contract.name || `合约 ${contract.file_name.substring(0, 6)}...`}</h3>
+                  <div className="bg-gray-700 rounded-lg p-3 mb-4">
+                    <p className="text-white font-mono text-sm break-all">{contract.file_name}</p>
+                  </div>
+                  <p className="text-gray-400 mb-6 text-sm">{contract.date || '未知时间'}</p>
+                  <Link href={{
+                    pathname: '/contract-optimization-details',
+                    query: { address: contract.file_name }
+                  }} passHref>
+                    <AnimatedButton className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-full hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 text-lg font-semibold">
+                      查看详情
+                    </AnimatedButton>
+                  </Link>
                 </motion.div>
               ))}
             </div>
