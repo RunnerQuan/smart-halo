@@ -25,15 +25,11 @@ const highlightSolidityCode = (code: string) => {
 };
 
 const HighlightedCode = ({ code }: { code: string }) => {
-  const codeRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (codeRef.current) {
-      codeRef.current.innerHTML = highlightSolidityCode(code);
-    }
-  }, [code]);
-
-  return <code ref={codeRef} className="hljs language-solidity" />;
+  return (
+    <pre className="syntax-highlighter">
+      <code dangerouslySetInnerHTML={{ __html: highlightSolidityCode(code) }} />
+    </pre>
+  );
 };
 
 export default function OptimizationDetails() {
@@ -42,7 +38,6 @@ export default function OptimizationDetails() {
   const [originalCode, setOriginalCode] = useState('');
   const [optimizedCode, setOptimizedCode] = useState('');
   const [taskId, setTaskId] = useState<string | null>(null);
-  const [isOptimizing, setIsOptimizing] = useState(false);
 
   useEffect(() => {
     const storedOriginalCode = sessionStorage.getItem('originalCode');
@@ -78,13 +73,11 @@ export default function OptimizationDetails() {
             const lines = data.result.split('\n');
             setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
             setIsReoptimizing(false);
-            setIsOptimizing(false); // 关闭加载页面
             setTaskId(null);
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
             alert(`优化失败: ${data.status}`);
             setIsReoptimizing(false);
-            setIsOptimizing(false); // 关闭加载页面
             setTaskId(null);
           } else {
             // 如果任务还在进行中，继续轮询
@@ -93,7 +86,6 @@ export default function OptimizationDetails() {
         } catch (error) {
           console.error('Error checking task status:', error);
           setIsReoptimizing(false);
-          setIsOptimizing(false); // 关闭加载页面
           setTaskId(null);
         }
       };
@@ -104,8 +96,6 @@ export default function OptimizationDetails() {
 
   const handleReoptimize = useCallback(async () => {
     setIsReoptimizing(true);
-    setOptimizedCode(''); // 清空右侧代码框
-    setIsOptimizing(true); // 显示优化中的页面
     try {
       const response = await fetch('http://localhost:2525/process_code', {
         method: 'POST',
@@ -125,7 +115,6 @@ export default function OptimizationDetails() {
       console.error('详细错误:', error);
       alert(`重新优化过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`);
       setIsReoptimizing(false);
-      setIsOptimizing(false); // 关闭加载页面
     }
   }, [originalCode]);
 
@@ -176,7 +165,7 @@ export default function OptimizationDetails() {
               <Editor
                 value={originalCode}
                 onValueChange={setOriginalCode}
-                highlight={code =>hljs.highlight(code, { language: 'solidity' }).value}
+                highlight={code => hljs.highlight(code, { language: 'solidity' }).value}
                 padding={10}
                 style={{
                   fontFamily: '"Fira code", "Fira Mono", monospace',
@@ -186,7 +175,7 @@ export default function OptimizationDetails() {
                   height: 'auto',
                 }}
                 className="min-h-full syntax-highlighter editable-code"
-                textareaClassName="focus:outline-none"
+                textareaClassName="focus:outline-none caret-white"
               />
             </div>
           </motion.div>
@@ -205,9 +194,7 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <pre className="syntax-highlighter">
-                <HighlightedCode code={optimizedCode} />
-              </pre>
+              <HighlightedCode code={optimizedCode} />
             </div>
           </motion.div>
         </div>
@@ -245,10 +232,7 @@ export default function OptimizationDetails() {
           color: black !important;
           text-shadow: none !important;
           font-weight: bold;
-          padding: 1px 4px;
-          border-radius: 4px;
-          display: inline-block;
-          line-height: 1;
+          padding: 2px 0;
         }
         .syntax-highlighter textarea {
           caret-color: white !important;
@@ -269,15 +253,6 @@ export default function OptimizationDetails() {
           overflow: auto !important;
         }
       `}</style>
-      {isOptimizing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
-            <ClipLoader color="#ffffff" size={50} className="mb-4" />
-            <p className="text-xl font-semibold">合约优化中...</p>
-            <p className="text-sm text-gray-400 mt-2">请耐心等待，这可能需要一些时间</p>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

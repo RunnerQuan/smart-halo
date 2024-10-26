@@ -78,13 +78,11 @@ export default function OptimizationDetails() {
             const lines = data.result.split('\n');
             setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
             setIsReoptimizing(false);
-            setIsOptimizing(false); // 关闭加载页面
             setTaskId(null);
           } else if (data.state === 'FAILURE') {
             console.error('Task failed:', data.status);
             alert(`优化失败: ${data.status}`);
             setIsReoptimizing(false);
-            setIsOptimizing(false); // 关闭加载页面
             setTaskId(null);
           } else {
             // 如果任务还在进行中，继续轮询
@@ -93,7 +91,6 @@ export default function OptimizationDetails() {
         } catch (error) {
           console.error('Error checking task status:', error);
           setIsReoptimizing(false);
-          setIsOptimizing(false); // 关闭加载页面
           setTaskId(null);
         }
       };
@@ -125,7 +122,7 @@ export default function OptimizationDetails() {
       console.error('详细错误:', error);
       alert(`重新优化过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`);
       setIsReoptimizing(false);
-      setIsOptimizing(false); // 关闭加载页面
+      setIsOptimizing(false);
     }
   }, [originalCode]);
 

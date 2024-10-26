@@ -197,6 +197,15 @@ export default function ContractOptimization() {
           </p>
         </motion.div>
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
+            <ClipLoader color="#ffffff" size={50} className="mb-4" />
+            <p className="text-xl font-semibold">合约优化中...</p>
+            <p className="text-sm text-gray-400 mt-2">请耐心等待，这可能需要一些时间</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

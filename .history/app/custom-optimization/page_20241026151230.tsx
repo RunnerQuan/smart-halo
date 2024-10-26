@@ -200,6 +200,8 @@ export default function CustomOptimization() {
           <h2 className="text-2xl font-semibold mb-4 text-purple-400 text-center">功能介绍</h2>
           <p className="mb-4 text-gray-300">
             本界面提供自定义优化功能，用户可以直接输入或上传智能合约代码，系统将分析代码并进行智能合约优化。
+          </p>
+          <p className="text-gray-300">
             优化后，您可以查看优化建议、性能提升和相关信息。该工具帮助开发者和研究人员提高智能合约的质量和效率。
           </p>
         </motion.div>
