@@ -9,7 +9,6 @@ import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
-import Editor from 'react-simple-code-editor';
 
 hljsDefineSolidity(hljs);
 
@@ -24,16 +23,72 @@ const highlightSolidityCode = (code: string) => {
   );
 };
 
-const HighlightedCode = ({ code }: { code: string }) => {
-  const codeRef = useRef<HTMLElement | null>(null);
+const HighlightedCode = ({ code, onCodeChange }: { code: string; onCodeChange?: (code: string) => void }) => {
+  const [editableCode, setEditableCode] = useState(code);
+  const preRef = useRef<HTMLPreElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const syncScroll = () => {
+    if (textareaRef.current && preRef.current) {
+      preRef.current.scrollTop = textareaRef.current.scrollTop;
+      preRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
+  };
+
+  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newCode = event.target.value;
+    setEditableCode(newCode);
+    if (onCodeChange) {
+      onCodeChange(newCode);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const start = event.currentTarget.selectionStart;
+      const end = event.currentTarget.selectionEnd;
+
+      // 插入两个空格作为缩进
+      const newCode = editableCode.substring(0, start) + '  ' + editableCode.substring(end);
+      setEditableCode(newCode);
+      if (onCodeChange) {
+        onCodeChange(newCode);
+      }
+
+      // 移动光标到插入的空格之后
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+        }
+      }, 0);
+    }
+  };
 
   useEffect(() => {
-    if (codeRef.current) {
-      codeRef.current.innerHTML = highlightSolidityCode(code);
+    if (preRef.current) {
+      preRef.current.innerHTML = highlightSolidityCode(editableCode);
     }
-  }, [code]);
+  }, [editableCode]);
 
-  return <code ref={codeRef} className="hljs language-solidity" />;
+  return (
+    <div className="code-editor-container">
+      <pre
+        ref={preRef}
+        className="hljs language-solidity code-content"
+        aria-hidden="true"
+      />
+      <textarea
+        ref={textareaRef}
+        value={editableCode}
+        onChange={handleInput}
+        onKeyDown={handleKeyDown}
+        onScroll={syncScroll}
+        className="code-textarea"
+        spellCheck="false"
+      />
+    </div>
+  );
 };
 
 export default function OptimizationDetails() {
@@ -45,24 +100,13 @@ export default function OptimizationDetails() {
 
   useEffect(() => {
     const storedOriginalCode = sessionStorage.getItem('originalCode');
-    const storedOptimizedCode = sessionStorage.getItem('optimizedCode');
     const storedTaskId = sessionStorage.getItem('taskId');
-
     if (storedOriginalCode) setOriginalCode(storedOriginalCode);
-    if (storedOptimizedCode) {
-      const lines = storedOptimizedCode.split('\n');
-      setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
-    }
     if (storedTaskId) setTaskId(storedTaskId);
-
+    
     // 清除 sessionStorage
     sessionStorage.removeItem('originalCode');
-    sessionStorage.removeItem('optimizedCode');
     sessionStorage.removeItem('taskId');
-
-    console.log('Stored Original Code:', storedOriginalCode);
-    console.log('Stored Optimized Code:', storedOptimizedCode);
-    console.log('Stored Task ID:', storedTaskId);
   }, []);
 
   useEffect(() => {
@@ -73,9 +117,7 @@ export default function OptimizationDetails() {
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {
-            console.log('Task completed, setting optimized code:', data.result);
-            const lines = data.result.split('\n');
-            setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
+            setOptimizedCode(data.result);
             setIsReoptimizing(false);
             setTaskId(null);
           } else if (data.state === 'FAILURE') {
@@ -123,11 +165,41 @@ export default function OptimizationDetails() {
   }, [originalCode]);
 
   const handleCopy = () => {
+    // 移除 **code** 中的 ** 符号
     const sanitizedCode = optimizedCode.replace(/\*\*(.*?)\*\*/g, '$1');
     navigator.clipboard.writeText(sanitizedCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
+
+  // 添加一个useEffect来强制重置样式
+  useEffect(() => {
+    // 重置body样式
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.backgroundColor = '#1A1A1A';
+
+    // 重置可能影响布局的全局样式
+    const style = document.createElement('style');
+    style.innerHTML = `
+      * {
+        box-sizing: border-box;
+      }
+      .code-editor-container,
+      .code-editor-container pre,
+      .code-editor-container textarea {
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
@@ -166,22 +238,7 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={originalCode}
-                onValueChange={setOriginalCode}
-                highlight={code => highlightSolidityCode(code)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                  minHeight: '100%',
-                  height: 'auto',
-                  overflow: 'auto',
-                }}
-                className="min-h-full syntax-highlighter"
-                textareaClassName="focus:outline-none"
-              />
+              <HighlightedCode code={originalCode} onCodeChange={setOriginalCode} />
             </div>
           </motion.div>
 
@@ -199,9 +256,7 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <pre className="syntax-highlighter">
-                <HighlightedCode code={optimizedCode} />
-              </pre>
+              <HighlightedCode code={optimizedCode} />
             </div>
           </motion.div>
         </div>
@@ -218,6 +273,50 @@ export default function OptimizationDetails() {
         )}
       </div>
       <style jsx global>{`
+        /* 确保这些样式优先级更高 */
+        .code-editor-container {
+          position: relative !important;
+          width: 100% !important;
+          height: 100% !important;
+          overflow: hidden !important;
+          border: none !important;
+          background: transparent !important;
+        }
+        .code-editor-container pre,
+        .code-editor-container textarea {
+          font-family: 'Fira Code', monospace !important;
+          font-size: 14px !important;
+          line-height: 1.5 !important;
+          margin: 0 !important;
+          padding: 10px !important;
+          white-space: pre-wrap !important;
+          word-break: break-all !important;
+          overflow: auto !important;
+          border: none !important;
+          background: transparent !important;
+        }
+        .code-content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          background-color: transparent !important;
+        }
+        .code-textarea {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          resize: none;
+          border: none;
+          background: transparent;
+          color: transparent;
+          caret-color: white;
+          outline: none;
+        }
         .syntax-highlighter {
           font-family: 'Fira Code', monospace;
           font-size: 14px;
@@ -226,7 +325,6 @@ export default function OptimizationDetails() {
           background-color: transparent !important;
           width: 100%;
           height: 100%;
-          padding: 1rem;
         }
         .hljs {
           background-color: transparent !important;
@@ -237,20 +335,6 @@ export default function OptimizationDetails() {
         .hljs .custom-highlight * {
           background-color: yellow !important;
           color: black !important;
-          text-shadow: none !important;
-          font-weight: bold;
-          padding: 2px 0;
-        }
-        /* 添加以下样式 */
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-        }
-        .code-editor-container textarea {
-          min-height: 100%;
-          resize: none;
         }
       `}</style>
     </main>

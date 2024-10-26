@@ -10,6 +10,9 @@ import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs';
+import 'prismjs/components/prism-solidity';
+import 'prismjs/themes/prism-dark.css';
 
 hljsDefineSolidity(hljs);
 
@@ -17,11 +20,7 @@ const CUSTOM_HIGHLIGHT_PLACEHOLDER = '___CUSTOM_HIGHLIGHT___';
 
 const highlightSolidityCode = (code: string) => {
   let processedCode = code.replace(/\*\*(.*?)\*\*/g, `${CUSTOM_HIGHLIGHT_PLACEHOLDER}$1${CUSTOM_HIGHLIGHT_PLACEHOLDER}`);
-  const highlightedCode = hljs.highlight(processedCode, { language: 'solidity' }).value;
-  return highlightedCode.replace(
-    new RegExp(`${CUSTOM_HIGHLIGHT_PLACEHOLDER}(.*?)${CUSTOM_HIGHLIGHT_PLACEHOLDER}`, 'g'),
-    '<span class="custom-highlight">$1</span>'
-  );
+  return highlight(processedCode, languages.solidity, 'solidity');
 };
 
 const HighlightedCode = ({ code }: { code: string }) => {
@@ -33,7 +32,7 @@ const HighlightedCode = ({ code }: { code: string }) => {
     }
   }, [code]);
 
-  return <code ref={codeRef} className="hljs language-solidity" />;
+  return <code ref={codeRef} className="language-solidity" />;
 };
 
 export default function OptimizationDetails() {
@@ -176,8 +175,6 @@ export default function OptimizationDetails() {
                   fontSize: 14,
                   backgroundColor: 'transparent',
                   minHeight: '100%',
-                  height: 'auto',
-                  overflow: 'auto',
                 }}
                 className="min-h-full syntax-highlighter"
                 textareaClassName="focus:outline-none"
@@ -228,29 +225,17 @@ export default function OptimizationDetails() {
           height: 100%;
           padding: 1rem;
         }
-        .hljs {
+        .language-solidity {
           background-color: transparent !important;
           padding: 0;
           height: 100%;
         }
-        .hljs .custom-highlight,
-        .hljs .custom-highlight * {
+        .token.custom-highlight {
           background-color: yellow !important;
           color: black !important;
           text-shadow: none !important;
           font-weight: bold;
           padding: 2px 0;
-        }
-        /* 添加以下样式 */
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-        }
-        .code-editor-container textarea {
-          min-height: 100%;
-          resize: none;
         }
       `}</style>
     </main>

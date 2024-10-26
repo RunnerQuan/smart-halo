@@ -9,7 +9,6 @@ import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
-import Editor from 'react-simple-code-editor';
 
 hljsDefineSolidity(hljs);
 
@@ -49,10 +48,7 @@ export default function OptimizationDetails() {
     const storedTaskId = sessionStorage.getItem('taskId');
 
     if (storedOriginalCode) setOriginalCode(storedOriginalCode);
-    if (storedOptimizedCode) {
-      const lines = storedOptimizedCode.split('\n');
-      setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
-    }
+    if (storedOptimizedCode) setOptimizedCode(storedOptimizedCode);
     if (storedTaskId) setTaskId(storedTaskId);
 
     // 清除 sessionStorage
@@ -74,8 +70,7 @@ export default function OptimizationDetails() {
 
           if (data.state === 'SUCCESS') {
             console.log('Task completed, setting optimized code:', data.result);
-            const lines = data.result.split('\n');
-            setOptimizedCode(lines.slice(1, -1).join('\n')); // 删除第一行和最后一行
+            setOptimizedCode(data.result);
             setIsReoptimizing(false);
             setTaskId(null);
           } else if (data.state === 'FAILURE') {
@@ -166,22 +161,9 @@ export default function OptimizationDetails() {
               </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
-              <Editor
-                value={originalCode}
-                onValueChange={setOriginalCode}
-                highlight={code => highlightSolidityCode(code)}
-                padding={10}
-                style={{
-                  fontFamily: '"Fira code", "Fira Mono", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                  minHeight: '100%',
-                  height: 'auto',
-                  overflow: 'auto',
-                }}
-                className="min-h-full syntax-highlighter"
-                textareaClassName="focus:outline-none"
-              />
+              <pre className="syntax-highlighter">
+                <HighlightedCode code={originalCode} />
+              </pre>
             </div>
           </motion.div>
 
@@ -237,20 +219,6 @@ export default function OptimizationDetails() {
         .hljs .custom-highlight * {
           background-color: yellow !important;
           color: black !important;
-          text-shadow: none !important;
-          font-weight: bold;
-          padding: 2px 0;
-        }
-        /* 添加以下样式 */
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-        }
-        .code-editor-container textarea {
-          min-height: 100%;
-          resize: none;
         }
       `}</style>
     </main>

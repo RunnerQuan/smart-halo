@@ -176,8 +176,6 @@ export default function OptimizationDetails() {
                   fontSize: 14,
                   backgroundColor: 'transparent',
                   minHeight: '100%',
-                  height: 'auto',
-                  overflow: 'auto',
                 }}
                 className="min-h-full syntax-highlighter"
                 textareaClassName="focus:outline-none"
@@ -240,17 +238,6 @@ export default function OptimizationDetails() {
           text-shadow: none !important;
           font-weight: bold;
           padding: 2px 0;
-        }
-        /* 添加以下样式 */
-        .code-editor-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-        }
-        .code-editor-container textarea {
-          min-height: 100%;
-          resize: none;
         }
       `}</style>
     </main>

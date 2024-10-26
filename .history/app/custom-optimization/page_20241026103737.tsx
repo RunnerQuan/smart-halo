@@ -169,7 +169,7 @@ export default function CustomOptimization() {
               {isLoading ? (
                 <>
                   <ClipLoader color="#ffffff" size={20} className="mr-2" />
-                  <span>合约优化中...</span>
+                  <span>处理中...</span>
                 </>
               ) : (
                 <>
@@ -215,7 +215,7 @@ export default function CustomOptimization() {
           <h2 className="text-2xl font-semibold mb-8 text-purple-400 text-center">优化亮点</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "智优化", desc: "基于依赖分析和大模型的优化，增强反编译精度", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
+              { title: "智能优化", desc: "基于依赖分析和大模型的优化，增强反编译精度", icon: <FaLightbulb className="text-3xl mb-2 text-yellow-400" /> },
               { title: "性能提升", desc: "显著提升变量类型恢复及合约属性识别的准确性", icon: <FaChartLine className="text-3xl mb-2 text-green-400" /> },
               { title: "安全增强", desc: "优化反编译输出，助力漏洞检测", icon: <FaShieldAlt className="text-3xl mb-2 text-blue-400" /> },
             ].map((item, index) => (
@@ -233,15 +233,6 @@ export default function CustomOptimization() {
           </div>
         </motion.div>
       </div>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
-            <ClipLoader color="#ffffff" size={50} className="mb-4" />
-            <p className="text-xl font-semibold">合约优化中...</p>
-            <p className="text-sm text-gray-400 mt-2">请耐心等待，这可能需要几分钟时间</p>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
