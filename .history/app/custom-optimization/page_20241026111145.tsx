@@ -236,9 +236,9 @@ export default function CustomOptimization() {
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
-            <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mb-4 mx-auto"></div>
+            <ClipLoader color="#ffffff" size={50} className="mb-4" />
             <p className="text-xl font-semibold">合约优化中...</p>
-            <p className="text-sm text-gray-400 mt-2">请耐心等待，这可能需要一些时间</p>
+            <p className="text-sm text-gray-400 mt-2">请耐心等待，这可能一些时间</p>
           </div>
         </div>
       )}

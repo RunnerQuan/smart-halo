@@ -251,17 +251,15 @@ export default function OptimizationDetails() {
         }
         .hljs .custom-highlight,
         .hljs .custom-highlight * {
-          background-color: #ffff00 !important; // 恢复到明亮的荧光黄色
-          color: #000000 !important; // 文字颜色改为黑色，以提高可读性
+          background-color: rgba(255, 255, 0, 0.3) !important;
+          color: #e6db74 !important;
           text-shadow: none !important;
           font-weight: normal;
-          padding: 1px 2px; // 减小内边距以降低高度
-          border-radius: 3px;
-          margin: 0 -1px;
+          padding: 2px 4px;
+          border-radius: 4px;
+          margin: 0 -2px;
           box-decoration-break: clone;
           -webkit-box-decoration-break: clone;
-          display: inline-block; // 使用 inline-block 来更好地控制高度
-          line-height: 1; // 减小行高
         }
         /* 添加以下样式 */
         .code-editor-container {

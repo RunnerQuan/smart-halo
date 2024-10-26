@@ -261,7 +261,7 @@ export default function OptimizationDetails() {
           box-decoration-break: clone;
           -webkit-box-decoration-break: clone;
           display: inline-block; // 使用 inline-block 来更好地控制高度
-          line-height: 1; // 减小行高
+          line-height: 1.05; // 减小行高
         }
         /* 添加以下样式 */
         .code-editor-container {
