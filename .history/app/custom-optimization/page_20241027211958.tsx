@@ -4,14 +4,13 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt, FaSearch, FaList } from 'react-icons/fa';
+import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt } from 'react-icons/fa';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
-import { Select } from '../../components/ui/select';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
@@ -20,7 +19,6 @@ export default function CustomOptimization() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [taskId, setTaskId] = useState<string | null>(null);
-  const [contractFunctions, setContractFunctions] = useState<string[]>([]);
 
   const handleOptimize = useCallback(async () => {
     if (!contractCode.trim()) {
@@ -111,13 +109,6 @@ export default function CustomOptimization() {
     }
   };
 
-  const handleAnalyzeContract = useCallback(() => {
-    // 这里添加分析合约函数的逻辑
-    console.log('分析合约函数');
-    // 示例：设置一些模拟的合约函数
-    setContractFunctions(['function1', 'function2', 'function3']);
-  }, []);
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
@@ -137,7 +128,7 @@ export default function CustomOptimization() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          输入或上传智能合约反编译输出代码，然后进行合约函数分析，选择指定的合约函数进行优化，最终获取优化后的反编译输出代码
+          输入或上传智能合约反编译输出代码，获取优化后的反编译输出代码
         </motion.p>
 
         <motion.div 
@@ -162,7 +153,7 @@ export default function CustomOptimization() {
               textareaClassName="focus:outline-none"
             />
           </div>
-          <div className="flex justify-between items-center space-x-4">
+          <div className="flex justify-between">
             <label className="bg-purple-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-purple-700 transition-colors font-bold">
               <FaUpload className="inline-block mr-2 mb-1" />
               上传合约文件
@@ -174,16 +165,6 @@ export default function CustomOptimization() {
                 onChange={handleFileUpload}
               />
             </label>
-            <AnimatedButton onClick={handleAnalyzeContract} className="flex items-center justify-center">
-              <FaSearch className="inline-block mr-2 mb-1" />
-              分析合约函数
-            </AnimatedButton>
-            <Select
-              options={contractFunctions}
-              placeholder="选择合约函数"
-              icon={<FaList className="inline-block mr-2 mb-1" />}
-              className="w-64"
-            />
             <AnimatedButton onClick={handleOptimize} disabled={isLoading} className="flex items-center justify-center">
               {isLoading ? (
                 <>

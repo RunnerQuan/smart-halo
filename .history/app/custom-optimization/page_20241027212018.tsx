@@ -113,7 +113,7 @@ export default function CustomOptimization() {
 
   const handleAnalyzeContract = useCallback(() => {
     // 这里添加分析合约函数的逻辑
-    console.log('分析合约函数');
+    console.log('分析合���函数');
     // 示例：设置一些模拟的合约函数
     setContractFunctions(['function1', 'function2', 'function3']);
   }, []);
@@ -137,7 +137,7 @@ export default function CustomOptimization() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          输入或上传智能合约反编译输出代码，然后进行合约函数分析，选择指定的合约函数进行优化，最终获取优化后的反编译输出代码
+          输入或上传智能合约反编译输出代码，获取优化后的反编译输出代码
         </motion.p>
 
         <motion.div 

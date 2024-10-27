@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCopy, FaShieldAlt } from 'react-icons/fa';
+import { FaCopy } from 'react-icons/fa';
 import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 // 注册 Solidity 语言
 hljsDefineSolidity(hljs);
@@ -49,7 +49,6 @@ export default function ContractOptimizationDetails() {
   const [activeTab, setActiveTab] = useState('decompile');
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,29 +100,12 @@ export default function ContractOptimizationDetails() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleVulnerabilityDetection = async () => {
-    try {
-      // 这里应该是发送优化后的代码到后端的逻辑
-      // 暂时我们只是将代码存储到 sessionStorage 并跳转到漏洞测页面
-      sessionStorage.setItem('optimizedCode', optimizedCode);
-      router.push('/vulnerability-detection');
-    } catch (error) {
-      console.error('Error during vulnerability detection:', error);
-      alert('漏洞检测过程中出现错误');
-    }
-  };
-
   const CustomSyntaxHighlighter = ({ code, language }: { code: string; language: string }) => {
     return (
       <pre className="syntax-highlighter">
         <HighlightedCode code={code} />
       </pre>
     );
-  };
-
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
   };
 
   return (
@@ -189,28 +171,10 @@ export default function ContractOptimizationDetails() {
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-purple-400">优化后代码</h2>
-                <div className="flex space-x-4">
-                  <motion.button
-                    onClick={handleVulnerabilityDetection}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <FaShieldAlt className="mr-2" />
-                    漏洞检测
-                  </motion.button>
-                  <motion.button
-                    onClick={handleCopy}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <FaCopy className="mr-2" />
-                    一键复制
-                  </motion.button>
-                </div>
+                <AnimatedButton onClick={handleCopy} className="flex items-center">
+                  <FaCopy className="mr-2" />
+                  一键复制
+                </AnimatedButton>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
                 <CustomSyntaxHighlighter

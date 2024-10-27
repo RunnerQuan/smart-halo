@@ -121,11 +121,6 @@ export default function ContractOptimizationDetails() {
     );
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
-  };
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
@@ -190,26 +185,19 @@ export default function ContractOptimizationDetails() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-purple-400">优化后代码</h2>
                 <div className="flex space-x-4">
-                  <motion.button
+                  <button
                     onClick={handleVulnerabilityDetection}
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
                   >
                     <FaShieldAlt className="mr-2" />
                     漏洞检测
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     onClick={handleCopy}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                   >
-                    <FaCopy className="mr-2" />
                     一键复制
-                  </motion.button>
+                  </button>
                 </div>
               </div>
               <div className="w-full h-[calc(100vh-220px)] overflow-auto">
