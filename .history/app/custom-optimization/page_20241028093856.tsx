@@ -11,6 +11,7 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
+import { Select } from '../../components/ui/select';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
@@ -20,7 +21,7 @@ export default function CustomOptimization() {
   const router = useRouter();
   const [taskId, setTaskId] = useState<string | null>(null);
   const [contractFunctions, setContractFunctions] = useState<string[]>([]);
-  const [selectedFunction, setSelectedFunction] = useState<string>('all_func');
+  const [selectedFunction, setSelectedFunction] = useState<string>('');
 
   const handleAnalyzeContract = useCallback(async () => {
     if (!contractCode.trim()) {
@@ -44,9 +45,7 @@ export default function CustomOptimization() {
 
       const data = await response.json();
       if (data.function_names) {
-        // 添加 "优化所有函数" 选项
-        const allFunctions = ['all_func', ...data.function_names];
-        setContractFunctions(allFunctions);
+        setContractFunctions(data.function_names);
       }
     } catch (error) {
       console.error('分析合约函数失败:', error);
@@ -62,14 +61,12 @@ export default function CustomOptimization() {
     }
 
     if (!selectedFunction) {
-      alert('请选择要优化的函数');
+      alert('请先选择要优化的函数');
       return;
     }
 
     setIsLoading(true);
     try {
-      console.log('正在发送优化请求，选中的函数是:', selectedFunction);
-
       const response = await fetch('http://localhost:2525/process_code', {
         method: 'POST',
         headers: {
@@ -77,20 +74,22 @@ export default function CustomOptimization() {
         },
         body: JSON.stringify({ 
           code: contractCode,
-          func_name: selectedFunction
+          func_name: selectedFunction 
         }),
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         throw new Error(`网络响应不正常: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('收到任务ID:', data.task_id);
+      console.log('Received task ID:', data.task_id);
       setTaskId(data.task_id);
     } catch (error) {
-      console.error('优化过程出错:', error);
-      alert(`优化失败: ${error instanceof Error ? error.message : '未知错误'}`);
+      console.error('详细错误:', error);
+      alert(`优化过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`);
       setIsLoading(false);
     }
   }, [contractCode, selectedFunction]);
@@ -215,22 +214,14 @@ export default function CustomOptimization() {
               <FaSearch className="inline-block mr-2 mb-1" />
               分析合约函数
             </AnimatedButton>
-            <select
-              className="w-64 bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            <Select
+              options={contractFunctions}
+              placeholder="选择合约函数"
+              icon={<FaList className="inline-block mr-2 mb-1" />}
+              className="w-64"
               value={selectedFunction}
-              onChange={(e) => {
-                const value = e.target.value;
-                console.log('选择的函数:', value);
-                setSelectedFunction(value);
-              }}
-            >
-              <option value="all_func">优化所有函数</option>
-              {contractFunctions.filter(func => func !== 'all_func').map((func) => (
-                <option key={func} value={func}>
-                  {func}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => setSelectedFunction(value)}
+            />
             <AnimatedButton onClick={handleOptimize} disabled={isLoading} className="flex items-center justify-center">
               {isLoading ? (
                 <>

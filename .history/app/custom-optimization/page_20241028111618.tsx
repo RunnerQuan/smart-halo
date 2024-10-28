@@ -11,6 +11,7 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-dark.css';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
+import { Select } from '../../components/ui/select';
 
 export default function CustomOptimization() {
   const [contractCode, setContractCode] = useState('');
