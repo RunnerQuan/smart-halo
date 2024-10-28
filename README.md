@@ -49,7 +49,7 @@ SmartHalo是一款创新的智能合约反编译输出优化工具,旨在提高�
 ## 安装和运行
 
 1. 克隆仓库:   
-   ``git clone https://github.com/your-username/smart-halo.git`` 
+   ``git clone https://github.com/RunnerQuan/smart-halo.git`` 
 
 2. 安装依赖:   
    ``cd smart-halo``
