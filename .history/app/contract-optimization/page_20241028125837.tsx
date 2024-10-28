@@ -2,9 +2,10 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaEye } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
 
@@ -52,7 +53,7 @@ export default function ContractOptimization() {
       sessionStorage.setItem('sourceCode', source_code);
 
       // 第二步：将反编译代码发送给服务器进行优化
-      const optimizeResponse = await fetch('http://172.18.197.84:2525/process_code', {
+      const optimizeResponse = await fetch('http://localhost:2525/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +86,7 @@ export default function ContractOptimization() {
       if (taskId) {
         try {
           // 使用 process_task_status 端点
-          const response = await fetch(`http://172.18.197.84:2525/process_task_status/${taskId}`);
+          const response = await fetch(`http://localhost:2525/process_task_status/${taskId}`);
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {

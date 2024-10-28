@@ -2,9 +2,10 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaEye } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
 
@@ -29,7 +30,7 @@ export default function ContractOptimization() {
 
     try {
       // 第一步：向本地的get.py发送请求获取反编译代码
-      const decompileResponse = await fetch('http://localhost:8080/decompile', {
+      const decompileResponse = await fetch('http://172.18.197.84:8080/decompile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export default function ContractOptimization() {
         },
         body: JSON.stringify({ 
           code: decompiled_code,
-          func_name: 'all_func'  // 添加 func_name 字段
+          func_name: 'all_func'
         }),
       });
 

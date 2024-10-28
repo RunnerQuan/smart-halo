@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt, FaSearch } from 'react-icons/fa';
+import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt, FaSearch, FaList } from 'react-icons/fa';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';

@@ -142,8 +142,8 @@ export default function OptimizationDetails() {
   const handleVulnerabilityScan = async () => {
     setIsVulnerabilityScanning(true);
     try {
-      // 存储优化后的代码，使用不同的 key 以避免冲突
-      sessionStorage.setItem('vulnerabilityCode', optimizedCode);
+      // 将原始代码存储到 sessionStorage
+      sessionStorage.setItem('originalCode', originalCode);
       
       // 跳转到漏洞检测页面
       router.push('/vulnerability-detection');

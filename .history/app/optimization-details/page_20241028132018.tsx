@@ -4,13 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCopy, FaShieldAlt } from 'react-icons/fa';
+import { FaCopy, FaSync } from 'react-icons/fa';
 import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 import Editor from 'react-simple-code-editor';
-import { useRouter } from 'next/navigation';
 
 hljsDefineSolidity(hljs);
 
@@ -44,8 +43,6 @@ export default function OptimizationDetails() {
   const [optimizedCode, setOptimizedCode] = useState('');
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [isVulnerabilityScanning, setIsVulnerabilityScanning] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const storedOriginalCode = sessionStorage.getItem('originalCode');
@@ -139,28 +136,6 @@ export default function OptimizationDetails() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleVulnerabilityScan = async () => {
-    setIsVulnerabilityScanning(true);
-    try {
-      // 存储优化后的代码，使用不同的 key 以避免冲突
-      sessionStorage.setItem('vulnerabilityCode', optimizedCode);
-      
-      // 跳转到漏洞检测页面
-      router.push('/vulnerability-detection');
-    } catch (error) {
-      console.error('漏洞检测失败:', error);
-      alert('漏洞检测失败，请重试');
-    } finally {
-      setIsVulnerabilityScanning(false);
-    }
-  };
-
-  // 添加按钮动画变体
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
-  };
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
@@ -199,38 +174,10 @@ export default function OptimizationDetails() {
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-purple-400">优化后代码</h2>
-              <div className="flex space-x-4">
-                <motion.button
-                  onClick={handleVulnerabilityScan}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                  disabled={isVulnerabilityScanning}
-                >
-                  {isVulnerabilityScanning ? (
-                    <>
-                      <ClipLoader color="#ffffff" size={20} className="mr-2" />
-                      检测中...
-                    </>
-                  ) : (
-                    <>
-                      <FaShieldAlt className="mr-2" />
-                      漏洞检测
-                    </>
-                  )}
-                </motion.button>
-                <motion.button
-                  onClick={handleCopy}
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                >
-                  <FaCopy className="mr-2" />
-                  一键复制
-                </motion.button>
-              </div>
+              <AnimatedButton onClick={handleCopy} className="flex items-center">
+                <FaCopy className="mr-2" />
+                一键复制
+              </AnimatedButton>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">
               <pre className="syntax-highlighter">
@@ -242,28 +189,12 @@ export default function OptimizationDetails() {
 
         {isCopied && (
           <motion.div 
-            className="fixed bottom-8 right-8 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg"
+            className="fixed bottom-8 right-8 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
           >
-            <div className="flex items-center">
-              <FaCopy className="mr-2" />
-              <span>优化后代码已复制到剪贴板</span>
-            </div>
-          </motion.div>
-        )}
-        {isVulnerabilityScanning && (
-          <motion.div 
-            className="fixed bottom-8 right-8 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-          >
-            <div className="flex items-center">
-              <FaShieldAlt className="mr-2" />
-              <span>正在进行漏洞检测...</span>
-            </div>
+            优化后代码已复制到剪贴板
           </motion.div>
         )}
       </div>

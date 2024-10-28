@@ -10,7 +10,6 @@ import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 import Editor from 'react-simple-code-editor';
-import { useRouter } from 'next/navigation';
 
 hljsDefineSolidity(hljs);
 
@@ -45,7 +44,6 @@ export default function OptimizationDetails() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isVulnerabilityScanning, setIsVulnerabilityScanning] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const storedOriginalCode = sessionStorage.getItem('originalCode');
@@ -142,23 +140,15 @@ export default function OptimizationDetails() {
   const handleVulnerabilityScan = async () => {
     setIsVulnerabilityScanning(true);
     try {
-      // 存储优化后的代码，使用不同的 key 以避免冲突
-      sessionStorage.setItem('vulnerabilityCode', optimizedCode);
-      
-      // 跳转到漏洞检测页面
-      router.push('/vulnerability-detection');
+      // TODO: 实现漏洞检测逻辑
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟请求
+      alert('漏洞检测完成！');
     } catch (error) {
       console.error('漏洞检测失败:', error);
       alert('漏洞检测失败，请重试');
     } finally {
       setIsVulnerabilityScanning(false);
     }
-  };
-
-  // 添加按钮动画变体
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
   };
 
   return (
@@ -200,36 +190,30 @@ export default function OptimizationDetails() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-purple-400">优化后代码</h2>
               <div className="flex space-x-4">
-                <motion.button
-                  onClick={handleVulnerabilityScan}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+                <AnimatedButton 
+                  onClick={handleVulnerabilityScan} 
+                  className="flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50"
                   disabled={isVulnerabilityScanning}
                 >
                   {isVulnerabilityScanning ? (
                     <>
                       <ClipLoader color="#ffffff" size={20} className="mr-2" />
-                      检测中...
+                      <span>检测中...</span>
                     </>
                   ) : (
                     <>
                       <FaShieldAlt className="mr-2" />
-                      漏洞检测
+                      <span>漏洞检测</span>
                     </>
                   )}
-                </motion.button>
-                <motion.button
-                  onClick={handleCopy}
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+                </AnimatedButton>
+                <AnimatedButton 
+                  onClick={handleCopy} 
+                  "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
                 >
                   <FaCopy className="mr-2" />
-                  一键复制
-                </motion.button>
+                  <span>一键复制</span>
+                </AnimatedButton>
               </div>
             </div>
             <div className="w-full h-[calc(100vh-220px)] overflow-auto">

@@ -10,7 +10,6 @@ import 'highlight.js/styles/vs2015.css';
 import hljsDefineSolidity from 'highlightjs-solidity';
 import { ClipLoader } from 'react-spinners';
 import Editor from 'react-simple-code-editor';
-import { useRouter } from 'next/navigation';
 
 hljsDefineSolidity(hljs);
 
@@ -45,7 +44,6 @@ export default function OptimizationDetails() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isVulnerabilityScanning, setIsVulnerabilityScanning] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const storedOriginalCode = sessionStorage.getItem('originalCode');
@@ -142,11 +140,9 @@ export default function OptimizationDetails() {
   const handleVulnerabilityScan = async () => {
     setIsVulnerabilityScanning(true);
     try {
-      // 存储优化后的代码，使用不同的 key 以避免冲突
-      sessionStorage.setItem('vulnerabilityCode', optimizedCode);
-      
-      // 跳转到漏洞检测页面
-      router.push('/vulnerability-detection');
+      // TODO: 实现漏洞检测逻辑
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟请求
+      alert('漏洞检测完成！');
     } catch (error) {
       console.error('漏洞检测失败:', error);
       alert('漏洞检测失败，请重试');

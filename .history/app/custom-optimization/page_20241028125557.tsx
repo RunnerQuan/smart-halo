@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt, FaSearch } from 'react-icons/fa';
+import { FaCode, FaUpload, FaRocket, FaLightbulb, FaChartLine, FaShieldAlt, FaSearch, FaList } from 'react-icons/fa';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/components/prism-javascript';
@@ -30,7 +30,7 @@ export default function CustomOptimization() {
     }
 
     try {
-      const response = await fetch('http://172.18.197.84:2525/extract_functions', {
+      const response = await fetch('http://172.18.197.84:8080/extract_functions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export default function CustomOptimization() {
     try {
       console.log('正在发送优化请求，选中的函数是:', selectedFunction);
 
-      const response = await fetch('http://172.18.197.84:2525/process_code', {
+      const response = await fetch('http://172.18.197.84:8080/process_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export default function CustomOptimization() {
             ? `/process_task_status/${taskId}`
             : `/method_task_status/${taskId}`;
             
-          const response = await fetch(`http://172.18.197.84:2525${endpoint}`);
+          const response = await fetch(`http://172.18.197.84:8080:2525${endpoint}`);
           const data = await response.json();
 
           if (data.state === 'SUCCESS') {

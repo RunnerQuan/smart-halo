@@ -2,9 +2,10 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaEye } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
 
