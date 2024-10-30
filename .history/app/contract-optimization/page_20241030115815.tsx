@@ -160,16 +160,10 @@ export default function ContractOptimization() {
               value={contractAddress}
               onChange={(e) => setContractAddress(e.target.value)}
             />
-            <AnimatedButton 
-              onClick={handleSearch} 
-              className={`flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-              disabled={isLoading}
-              whileHover={isLoading ? undefined : { scale: 1.05 }}
-              whileTap={isLoading ? undefined : { scale: 0.95 }}
-            >
+            <AnimatedButton onClick={handleSearch} className="flex items-center justify-center" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin mr-2"></div>
+                  <ClipLoader color="#ffffff" size={20} className="mr-2" />
                   <span>处理中...</span>
                 </>
               ) : (

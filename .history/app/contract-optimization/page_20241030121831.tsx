@@ -6,7 +6,6 @@ import AnimatedButton from '../../components/ui/animated-button';
 import Navbar from '../../components/Navbar';
 import { FaSearch } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { ClipLoader } from 'react-spinners';
 
 export default function ContractOptimization() {
   const [contractAddress, setContractAddress] = useState('');
@@ -160,25 +159,27 @@ export default function ContractOptimization() {
               value={contractAddress}
               onChange={(e) => setContractAddress(e.target.value)}
             />
-            <AnimatedButton 
-              onClick={handleSearch} 
-              className={`flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-              disabled={isLoading}
+            <motion.button
+              onClick={handleSearch}
+              className={`bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded flex items-center ${
+                isLoading ? 'opacity-75 cursor-not-allowed' : ''
+              }`}
               whileHover={isLoading ? undefined : { scale: 1.05 }}
               whileTap={isLoading ? undefined : { scale: 0.95 }}
+              disabled={isLoading}
             >
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin mr-2"></div>
-                  <span>处理中...</span>
+                  处理中...
                 </>
               ) : (
                 <>
                   <FaSearch className="mr-2" />
-                  <span>搜索</span>
+                  搜索
                 </>
               )}
-            </AnimatedButton>
+            </motion.button>
           </div>
           {showError && (
             <motion.p

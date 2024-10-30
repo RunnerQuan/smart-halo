@@ -48,7 +48,6 @@ export default function ContractOptimizationDetails() {
   const [optimizedCode, setOptimizedCode] = useState('');
   const [activeTab, setActiveTab] = useState('decompile');
   const [isLoading, setIsLoading] = useState(true);
-  const [isVulnerabilityDetecting, setIsVulnerabilityDetecting] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -104,27 +103,18 @@ export default function ContractOptimizationDetails() {
 
   const handleVulnerabilityDetection = async () => {
     try {
-      setIsVulnerabilityDetecting(true);
-      
-      let address = searchParams.get('address');
-      if (!address) {
-        address = sessionStorage.getItem('originalAddress');
-      }
-      if (!address) {
-        throw new Error('未找到合约地址');
-      }
-
       const bytecode = sessionStorage.getItem('bytecode');
+      if (!bytecode) {
+        throw new Error('未找到合约字节码');
+      }
 
-      const response = await fetch('http://172.18.197.84:2525/run_inter_task', {
+      // 发送字节码到后端进行漏洞检测
+      const response = await fetch('http://172.18.197.84:8080/detect_vulnerability', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          address,
-          bytecode
-        }),
+        body: JSON.stringify({ bytecode }),
       });
 
       if (!response.ok) {
@@ -132,28 +122,16 @@ export default function ContractOptimizationDetails() {
       }
 
       const data = await response.json();
-      const taskId = data.task_id;
-
-      while (true) {
-        const statusResponse = await fetch(`http://172.18.197.84:2525/inter_task_status/${taskId}`);
-        const statusData = await statusResponse.json();
-
-        if (statusData.state === 'SUCCESS') {
-          sessionStorage.setItem('vulnerabilityCode', optimizedCode);
-          sessionStorage.setItem('vulnerabilityResult', JSON.stringify(statusData.result));
-          setIsVulnerabilityDetecting(false);
-          router.push('/vulnerability-detection');
-          break;
-        } else if (statusData.state === 'FAILURE') {
-          throw new Error(`漏洞检测失败: ${statusData.status}`);
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+      
+      // 将优化后的代码和漏洞检测结果存储到 sessionStorage
+      sessionStorage.setItem('vulnerabilityCode', optimizedCode);
+      sessionStorage.setItem('vulnerabilityResult', data.result);
+      
+      // 跳转到漏洞检测页面
+      router.push('/vulnerability-detection');
     } catch (error) {
       console.error('Error during vulnerability detection:', error);
       alert('漏洞检测过程中出现错误');
-      setIsVulnerabilityDetecting(false);
     }
   };
 
@@ -236,25 +214,13 @@ export default function ContractOptimizationDetails() {
                 <div className="flex space-x-4">
                   <motion.button
                     onClick={handleVulnerabilityDetection}
-                    className={`bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center ${
-                      isVulnerabilityDetecting ? 'opacity-75 cursor-not-allowed' : ''
-                    }`}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
                     variants={buttonVariants}
-                    whileHover={isVulnerabilityDetecting ? undefined : "hover"}
-                    whileTap={isVulnerabilityDetecting ? undefined : "tap"}
-                    disabled={isVulnerabilityDetecting}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    {isVulnerabilityDetecting ? (
-                      <>
-                        <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin mr-2"></div>
-                        检测中...
-                      </>
-                    ) : (
-                      <>
-                        <FaShieldAlt className="mr-2" />
-                        漏洞检测
-                      </>
-                    )}
+                    <FaShieldAlt className="mr-2" />
+                    漏洞检测
                   </motion.button>
                   <motion.button
                     onClick={handleCopy}
