@@ -3,14 +3,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
-import { FaRocket, FaCode, FaSearch, FaChevronRight, FaShieldAlt } from 'react-icons/fa';
+import { FaRocket, FaCode, FaSearch, FaDownload, FaChevronRight } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Help() {
   const steps = [
     { 
       title: "1. 选择优化方式", 
-      desc: "根据您的需求，选择和使用合约优化器或链上合约优化",
+      desc: "根据您的需求，选择合约地址优化或自定义优化",
       icon: <FaRocket className="text-4xl mb-4 text-cyan-500" />
     },
     { 
@@ -26,7 +26,7 @@ export default function Help() {
     { 
       title: "4. 漏洞检测", 
       desc: "优化完成后，您可以对优化后的合约代码进行漏洞检测，确保合约的安全性",
-      icon: <FaShieldAlt className="text-4xl mb-4 text-cyan-500" />
+      icon: <FaDownload className="text-4xl mb-4 text-cyan-500" />
     }
   ];
 
@@ -110,7 +110,7 @@ export default function Help() {
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2 text-purple-400">优化过程需要多长时间？</h3>
-              <p className="text-gray-300">大多数合约的优化过程只需要几秒钟。对于特别复杂的合约，可能需要稍长一些的时间。</p>
+              <p className="text-gray-300">大多数合约的优化过程只需要几秒钟。对于特别复杂的合约，可能需要稍长一些的时间，但通常不会超过一分钟。</p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2 text-purple-400">优化后的代码是否安全？</h3>

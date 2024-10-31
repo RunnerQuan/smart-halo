@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
-import { FaRocket, FaCode, FaSearch, FaChevronRight, FaShieldAlt } from 'react-icons/fa';
+import { FaRocket, FaCode, FaSearch, FaDownload, FaChevronRight } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Help() {
@@ -26,7 +26,7 @@ export default function Help() {
     { 
       title: "4. 漏洞检测", 
       desc: "优化完成后，您可以对优化后的合约代码进行漏洞检测，确保合约的安全性",
-      icon: <FaShieldAlt className="text-4xl mb-4 text-cyan-500" />
+      icon: <FaDownload className="text-4xl mb-4 text-cyan-500" />
     }
   ];
 
