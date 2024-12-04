@@ -8,6 +8,21 @@ import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/ui/animated-button';
 import Navbar from '../components/Navbar';
 import { FaCode, FaQuestionCircle } from 'react-icons/fa';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  RadialLinearScale,
+  ArcElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Bar, Line, Radar, Doughnut } from 'react-chartjs-2';
 
 const IconCloud = lazy(() => import('../components/ui/icon-cloud'));
 
@@ -28,6 +43,45 @@ interface Contract {
   date: string | null;
   name: string | null;
 }
+
+// 注册组件
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  RadialLinearScale,
+  ArcElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+// 定义通用图表配置
+const commonChartOptions = {
+  responsive: true,
+  scales: {
+    y: {
+      beginAtZero: true,
+      max: 100,
+      ticks: {
+        callback: function(value: number): string {
+          return value + '%';
+        }
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: false,
+    },
+  },
+};
 
 export default function Home() {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -105,6 +159,543 @@ export default function Home() {
               }>
                 <IconCloud />
               </Suspense>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <section className="mt-32 w-full">
+            <motion.h2 
+              className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+              initial="hidden"
+              animate="visible"
+              variants={titleAnimation}
+            >
+              项目成效
+            </motion.h2>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* 左侧：SmartHalo vs Dedaub 对比 - 雷达图 */}
+              <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">SmartHalo vs Dedaub反编译器性能对比</h3>
+                <Radar
+                  data={{
+                    labels: ['函数边界', '变量类型', '合约属性'],
+                    datasets: [
+                      {
+                        label: 'Dedaub反编译器',
+                        data: [50.48, 62.25, 0],
+                        backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 99, 132, 1)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                      },
+                      {
+                        label: 'SmartHalo',
+                        data: [80.51, 84.26, 68.06],
+                        backgroundColor: 'rgba(54, 162, 235, 0.3)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(54, 162, 235, 1)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    scales: {
+                      r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                          callback: (value) => `${value}%`,
+                          color: '#FFFFFF',
+                          font: {
+                            size: 16
+                          },
+                          backdropColor: 'transparent'
+                        },
+                        grid: {
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          circular: true,
+                          lineWidth: 1.5
+                        },
+                        angleLines: {
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          lineWidth: 1.5
+                        },
+                        pointLabels: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 18,
+                            weight: 'bold'
+                          }
+                        }
+                      }
+                    },
+                    plugins: {
+                      legend: {
+                        labels: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 16,
+                            weight: 'bold'
+                          }
+                        }
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            return `${context.dataset.label}: ${context.raw}%`;
+                          }
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              {/* 右侧：GPT对比和重入漏洞检测的垂直布局 */}
+              <div className="flex flex-col gap-8">
+                {/* GPT-3.5 vs GPT-4 对比 - 折线图 */}
+                <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
+                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">使用GPT-3.5 vs 使用GPT-4 性能对比</h3>
+                  <Line
+                    data={{
+                      labels: ['函数边界', '变量类型', '合约属性'],
+                      datasets: [
+                        {
+                          label: 'GPT-3.5',
+                          data: [78.99, 71.52, 73.13],
+                          borderColor: 'rgba(255, 159, 64, 1)',
+                          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                          fill: true,
+                          tension: 0.4
+                        },
+                        {
+                          label: 'GPT-4',
+                          data: [87.39, 90.39, 80.65],
+                          borderColor: 'rgba(75, 192, 192, 1)',
+                          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                          fill: true,
+                          tension: 0.4
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          max: 100,
+                          grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: true
+                          },
+                          ticks: {
+                            callback: (value) => `${value}%`,
+                            color: '#FFFFFF',
+                            font: {
+                              size: 16
+                            },
+                            padding: 8
+                          },
+                          border: {
+                            display: true,
+                            color: 'rgba(255, 255, 255, 0.3)'
+                          }
+                        },
+                        x: {
+                          grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                          },
+                          ticks: {
+                            color: '#FFFFFF',
+                            font: {
+                              size: 16
+                            }
+                          }
+                        }
+                      },
+                      plugins: {
+                        legend: {
+                          labels: {
+                            color: '#FFFFFF',
+                            font: {
+                              size: 16,
+                              weight: 'bold'
+                            },
+                            padding: 20
+                          }
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return `${context.dataset.label}: ${context.raw}%`;
+                            }
+                          }
+                        }
+                      },
+                      layout: {
+                        padding: {
+                          top: 20,
+                          right: 20
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* 重入漏洞检测性能 - 环形图 */}
+                <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
+                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">重入漏洞检测性能</h3>
+                  <div className="relative" style={{ maxHeight: '300px' }}>
+                    <Doughnut
+                      data={{
+                        labels: ['SliSE 准确率', 'SmartHalo 准确率'],
+                        datasets: [
+                          {
+                            data: [72.16, 80.41],
+                            backgroundColor: [
+                              'rgba(153, 102, 255, 0.8)',
+                              'rgba(54, 162, 235, 0.8)'
+                            ],
+                            borderColor: [
+                              'rgba(153, 102, 255, 1)',
+                              'rgba(54, 162, 235, 1)'
+                            ],
+                            borderWidth: 1
+                          }
+                        ]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'right',
+                            align: 'center',
+                            labels: {
+                              color: '#FFFFFF',
+                              font: {
+                                size: 16,
+                                weight: 'bold'
+                              },
+                              padding: 20,
+                              boxWidth: 15
+                            }
+                          },
+                          tooltip: {
+                            callbacks: {
+                              label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
+                              }
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* 合约攻击识别性能对比 */}
+              <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700" style={{ height: '500px' }}>
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">合约攻击识别性能对比</h3>
+                <Bar
+                  data={{
+                    labels: ['BlockWatchdog', 'BlockWatchdog+SmartHalo'],
+                    datasets: [
+                      {
+                        label: '真阳性',
+                        data: [15, 18],
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '假阳性',
+                        data: [3, 0],
+                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '准确率',
+                        data: [83.33, 100],
+                        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 3,
+                        type: 'line',
+                        yAxisID: 'percentage',
+                        tension: 0.4
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                      padding: {
+                        bottom: 25,
+                        top: 20,
+                        right: 20,
+                        left: 10
+                      }
+                    },
+                    plugins: {
+                      legend: {
+                        position: 'top' as const,
+                        align: 'center' as const,
+                        labels: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14,
+                            weight: 'bold'
+                          },
+                          padding: 15,
+                          boxWidth: 12
+                        }
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            if (context.dataset.yAxisID === 'percentage' || label.includes('率')) {
+                              return `${label}: ${value}%`;
+                            }
+                            return `${label}: ${value}`;
+                          }
+                        }
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 20,
+                        grid: {
+                          color: 'rgba(255, 255, 255, 0.1)',
+                          drawBorder: true,
+                          drawOnChartArea: true
+                        },
+                        border: {
+                          display: true,
+                          color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        ticks: {
+                          stepSize: 5,
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14
+                          }
+                        }
+                      },
+                      percentage: {
+                        position: 'right',
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                          display: false
+                        },
+                        border: {
+                          display: true,
+                          color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        ticks: {
+                          stepSize: 20,
+                          callback: (value) => `${value}%`,
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14
+                          }
+                        }
+                      },
+                      x: {
+                        grid: {
+                          color: 'rgba(255, 255, 255, 0.1)',
+                          drawBorder: true,
+                          drawOnChartArea: true
+                        },
+                        border: {
+                          display: true,
+                          color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        ticks: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 16,
+                            weight: 'bold'
+                          },
+                          padding: 10
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              {/* 整数溢出漏洞检测性能 */}
+              <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700" style={{ height: '500px' }}>
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">整数溢出漏洞检测性能</h3>
+                <Bar
+                  data={{
+                    labels: ['Mythril', 'Mythril+SmartHalo'],
+                    datasets: [
+                      {
+                        label: '准确率-真阳性',
+                        data: [13, 32],
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '准确率-假阳性',
+                        data: [5, 2],
+                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '准确率',
+                        data: [72.22, 94.18],
+                        backgroundColor: 'rgba(255, 206, 86, 0.8)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 3,
+                        type: 'line',
+                        yAxisID: 'percentage',
+                        tension: 0.4
+                      },
+                      {
+                        label: '召回率-真阳性',
+                        data: [13, 32],
+                        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '召回率-假阴性',
+                        data: [37, 18],
+                        backgroundColor: 'rgba(153, 102, 255, 0.8)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                      },
+                      {
+                        label: '召回率',
+                        data: [26.00, 64.00],
+                        backgroundColor: 'rgba(255, 159, 64, 0.8)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 3,
+                        type: 'line',
+                        yAxisID: 'percentage',
+                        tension: 0.4
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                      padding: {
+                        bottom: 25,
+                        top: 20,
+                        right: 20,
+                        left: 10
+                      }
+                    },
+                    plugins: {
+                      legend: {
+                        position: 'top' as const,
+                        align: 'center' as const,
+                        labels: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14,
+                            weight: 'bold'
+                          },
+                          padding: 15,
+                          boxWidth: 12
+                        }
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            if (context.dataset.yAxisID === 'percentage' || label.includes('率')) {
+                              return `${label}: ${value}%`;
+                            }
+                            return `${label}: ${value}`;
+                          }
+                        }
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 40,  // 调整最大值以适应数据
+                        grid: {
+                          color: 'rgba(255, 255, 255, 0.1)',
+                          drawOnChartArea: true
+                        },
+                        ticks: {
+                          stepSize: 10,
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14
+                          }
+                        }
+                      },
+                      percentage: {
+                        position: 'right',
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                          display: false
+                        },
+                        ticks: {
+                          stepSize: 20,
+                          callback: (value) => `${value}%`,
+                          color: '#FFFFFF',
+                          font: {
+                            size: 14
+                          }
+                        }
+                      },
+                      x: {
+                        grid: {
+                          color: 'rgba(255, 255, 255, 0.1)',
+                          drawBorder: true,
+                          drawOnChartArea: true
+                        },
+                        border: {
+                          display: true,
+                          color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        ticks: {
+                          color: '#FFFFFF',
+                          font: {
+                            size: 16,
+                            weight: 'bold'
+                          },
+                          padding: 15
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
           </section>
         </AnimatedSection>
@@ -206,9 +797,9 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低，能够快速处理智能合约的反编译和优化任务", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大语言模型，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "深度智能合约分析", desc: "能够识别复杂的智能合约结构，恢复合约中丢失的关键属性，尤其适用于安全分析任务", icon: "/icons/customize.svg" }
+                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低；并且可以集成不同的大型语言模型，能够适应不同的应用场景", icon: "/icons/speed.svg" },
+                { title: "精准优化反编译输输出", desc: "结合静态分析和大型语言模型，能够更准确地识别函数边界、变量类型和合约属性，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
+                { title: "多维度依赖关系分析", desc: "利用依赖关系（控制流依赖、类型依赖和状态依赖）构建合约依赖图，更全面地捕捉代码中的关键语义信息", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div
                   key={index}
