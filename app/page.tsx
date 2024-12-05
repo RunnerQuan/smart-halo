@@ -83,6 +83,23 @@ const commonChartOptions = {
   },
 };
 
+// 修改图表的通用配置
+const commonTooltipStyle = {
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  padding: 12,
+  bodyFont: {
+    size: 14,
+    family: 'system-ui'
+  },
+  titleFont: {
+    size: 16,
+    weight: 'bold',
+    family: 'system-ui'
+  },
+  bodySpacing: 8,
+  boxPadding: 6
+};
+
 export default function Home() {
   const [contracts, setContracts] = useState<Contract[]>([]);
 
@@ -177,7 +194,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               {/* 左侧：SmartHalo vs Dedaub 对比 - 雷达图 */}
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
-                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">SmartHalo vs Dedaub反编译器性能对比</h3>
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">SmartHalo vs Dedaub反编译器效果对比</h3>
                 <Radar
                   data={{
                     labels: ['函数边界', '变量类型', '合约属性'],
@@ -253,6 +270,7 @@ export default function Home() {
                         }
                       },
                       tooltip: {
+                        ...commonTooltipStyle,
                         callbacks: {
                           label: function(context) {
                             return `${context.dataset.label}: ${context.raw}%`;
@@ -268,7 +286,7 @@ export default function Home() {
               <div className="flex flex-col gap-8">
                 {/* GPT-3.5 vs GPT-4 对比 - 折线图 */}
                 <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
-                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">使用GPT-3.5 vs 使用GPT-4 性能对比</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">使用GPT-3.5 vs 使用GPT-4o 效果对比</h3>
                   <Line
                     data={{
                       labels: ['函数边界', '变量类型', '合约属性'],
@@ -282,7 +300,7 @@ export default function Home() {
                           tension: 0.4
                         },
                         {
-                          label: 'GPT-4',
+                          label: 'GPT-4o',
                           data: [87.39, 90.39, 80.65],
                           borderColor: 'rgba(75, 192, 192, 1)',
                           backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -338,6 +356,7 @@ export default function Home() {
                           }
                         },
                         tooltip: {
+                          ...commonTooltipStyle,
                           callbacks: {
                             label: function(context) {
                               return `${context.dataset.label}: ${context.raw}%`;
@@ -357,11 +376,11 @@ export default function Home() {
 
                 {/* 重入漏洞检测性能 - 环形图 */}
                 <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
-                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">重入漏洞检测性能</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">下游任务有效性 - 重入漏洞检测</h3>
                   <div className="relative" style={{ maxHeight: '300px' }}>
                     <Doughnut
                       data={{
-                        labels: ['SliSE 准确率', 'SmartHalo 准确率'],
+                        labels: ['SliSE+SmartHalo 准确率', 'SmartHalo 准确率'],
                         datasets: [
                           {
                             data: [72.16, 80.41],
@@ -395,6 +414,7 @@ export default function Home() {
                             }
                           },
                           tooltip: {
+                            ...commonTooltipStyle,
                             callbacks: {
                               label: function(context) {
                                 return `${context.label}: ${context.raw}%`;
@@ -412,7 +432,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* 合约攻击识别性能对比 */}
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700" style={{ height: '500px' }}>
-                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">合约攻击识别性能对比</h3>
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">下游任务有效性 - 合约攻击识别</h3>
                 <Bar
                   data={{
                     labels: ['BlockWatchdog', 'BlockWatchdog+SmartHalo'],
@@ -469,6 +489,7 @@ export default function Home() {
                         }
                       },
                       tooltip: {
+                        ...commonTooltipStyle,
                         callbacks: {
                           label: function(context) {
                             const label = context.dataset.label || '';
@@ -492,7 +513,8 @@ export default function Home() {
                         },
                         border: {
                           display: true,
-                          color: 'rgba(255, 255, 255, 0.3)'
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          width: 2
                         },
                         ticks: {
                           stepSize: 5,
@@ -511,7 +533,8 @@ export default function Home() {
                         },
                         border: {
                           display: true,
-                          color: 'rgba(255, 255, 255, 0.3)'
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          width: 2
                         },
                         ticks: {
                           stepSize: 20,
@@ -530,7 +553,8 @@ export default function Home() {
                         },
                         border: {
                           display: true,
-                          color: 'rgba(255, 255, 255, 0.3)'
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          width: 2
                         },
                         ticks: {
                           color: '#FFFFFF',
@@ -548,7 +572,7 @@ export default function Home() {
 
               {/* 整数溢出漏洞检测性能 */}
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700" style={{ height: '500px' }}>
-                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">整数溢出漏洞检测性能</h3>
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">下游任务有效性 - 整数溢出漏洞检测</h3>
                 <Bar
                   data={{
                     labels: ['Mythril', 'Mythril+SmartHalo'],
@@ -629,11 +653,12 @@ export default function Home() {
                         }
                       },
                       tooltip: {
+                        ...commonTooltipStyle,
                         callbacks: {
                           label: function(context) {
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
-                            if (context.dataset.yAxisID === 'percentage' || label.includes('率')) {
+                            if (context.dataset.yAxisID === 'percentage' || (label.includes('率') && label.length == 3)) {
                               return `${label}: ${value}%`;
                             }
                             return `${label}: ${value}`;
@@ -664,6 +689,11 @@ export default function Home() {
                         grid: {
                           display: false
                         },
+                        border: {
+                          display: true,
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          width: 2
+                        },
                         ticks: {
                           stepSize: 20,
                           callback: (value) => `${value}%`,
@@ -681,7 +711,8 @@ export default function Home() {
                         },
                         border: {
                           display: true,
-                          color: 'rgba(255, 255, 255, 0.3)'
+                          color: 'rgba(255, 255, 255, 0.3)',
+                          width: 2
                         },
                         ticks: {
                           color: '#FFFFFF',
