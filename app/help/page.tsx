@@ -106,7 +106,7 @@ export default function Help() {
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold mb-2 text-purple-400">SmartHalo 支持哪些区块链平台？</h3>
-              <p className="text-gray-300">SmartHalo 支持 Ethereum、BSC、Polygon 等主流区块链平台的智能合约优化。</p>
+              <p className="text-gray-300">SmartHalo 支持 Ethereum、BSC、Polygon 等主流区块链平台的智能合约反编译代码优化。</p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2 text-purple-400">优化过程需要多长时间？</h3>
