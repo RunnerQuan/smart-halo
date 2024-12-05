@@ -257,7 +257,7 @@ export default function CustomOptimization() {
           )}
         </motion.div>
 
-        <motion.div 
+        {/* <motion.div 
           className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-12 w-full max-w-3xl mx-auto shadow-lg"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -265,10 +265,33 @@ export default function CustomOptimization() {
         >
           <h2 className="text-2xl font-semibold mb-4 text-purple-400 text-center">功能介绍</h2>
           <p className="mb-4 text-gray-300">
-            本界面提供自定义优化功能，用户可以直接输入或上传智能合约代码，系统将分析代码并进行智能合约优化。
-            优化后，您可以查看优化建议、性能提升和相关信息。该工具帮助开发者和研究人员提高智能合约的质量和效率。
+            本界面提供自定义优化功能，用户可以直接输入或上传智能合约代码。用户点击“分析合约函数”后，系统将提取代码中所有的函数名，
+            并提供给用户选择。用户选择需要优化的函数后，点击“开始优化”，系统将优化选中的函数。
+            该功能能够帮助开发者和研究人员提高智能合约的质量和效率。
+          </p>
+        </motion.div> */}
+
+        <motion.div 
+          className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-12 w-full max-w-3xl mx-auto shadow-lg"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <h2 className="text-3xl font-bold mb-6 text-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500 text-center">
+            功能介绍
+          </h2>
+          <p className="text-gray-300 text-lg leading-relaxed mb-6">
+            本界面提供<strong className="text-purple-400">自定义优化功能</strong>，用户可以直接输入或上传智能合约代码。用户点击
+            <strong className="text-yellow-400">“分析合约函数”</strong>后，系统将提取代码中所有的函数名，并提供给用户选择。
+          </p>
+          <p className="text-gray-300 text-lg leading-relaxed mb-6">
+            用户选择需要优化的函数后，点击<strong className="text-yellow-400">“开始优化”</strong>，系统将优化选中的函数。
+          </p>
+          <p className="text-gray-300 text-lg leading-relaxed">
+            该功能能够帮助开发者和研究人员提高智能合约反编译输出的质量，确保优化后的代码与源代码功能一致。
           </p>
         </motion.div>
+        
 
         <motion.div
           className="w-full max-w-3xl mx-auto"
