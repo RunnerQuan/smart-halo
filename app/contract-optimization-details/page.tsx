@@ -310,6 +310,27 @@ export default function ContractOptimizationDetails() {
           height: 100%;
           padding: 1rem;
         }
+
+        /* 自定义滚动条样式 */
+        .syntax-highlighter::-webkit-scrollbar {
+          width: 4px;
+          height: 4px;
+        }
+
+        .syntax-highlighter::-webkit-scrollbar-track {
+          background: rgba(128, 128, 128, 0.1);
+          border-radius: 2px;
+        }
+
+        .syntax-highlighter::-webkit-scrollbar-thumb {
+          background: rgba(147, 51, 234, 0.3);
+          border-radius: 2px;
+        }
+
+        .syntax-highlighter::-webkit-scrollbar-thumb:hover {
+          background: rgba(147, 51, 234, 0.5);
+        }
+
         .syntax-highlighter code {
           background-color: transparent !important;
         }

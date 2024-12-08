@@ -7,7 +7,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/ui/animated-button';
 import Navbar from '../components/Navbar';
-import { FaCode, FaQuestionCircle } from 'react-icons/fa';
+import { FaCode, FaQuestionCircle, FaChartLine, FaTools, FaDatabase } from 'react-icons/fa';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -124,18 +124,27 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-start p-8 bg-[#1A1A1A] text-white font-sans">
       <Navbar />
 
-      <div className="mt-40 w-full max-w-7xl mx-auto">
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-green-900/20 via-blue-900/10 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent pointer-events-none" />
+      
+      <div className="mt-32 w-full max-w-7xl mx-auto relative">
         <AnimatedSection>
           <section className="flex flex-col md:flex-row items-start justify-between mt-16">
             <motion.div 
-              className="md:w-1/2 text-left"
+              className="md:w-1/2 text-left relative"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <h1 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 leading-tight">
-                SmartHalo 智能合约反编译代码增强与优化工具
+              <div className="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/20 rounded-full filter blur-[120px] pointer-events-none" />
+              <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/20 rounded-full filter blur-[120px] pointer-events-none" />
+              
+              <h1 className="text-8xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 relative">
+                SmartHalo
               </h1>
+              <h2 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                智能合约反编译代码增强与优化工具
+              </h2>
               <p className="text-xl text-white mb-8 max-w-xl">
                 SmartHalo - 让智能合约反编译输出更清晰、更准确、更易读
               </p>
@@ -153,20 +162,6 @@ export default function Home() {
                   支持代码重编译，验证输出准确性，确保反编译输出优化结果与原始程序行为一致
                 </li>
               </ul>
-              <div className="flex space-x-8">
-                <Link href="/custom-optimization" passHref>
-                  <AnimatedButton>
-                    <FaCode className="inline-block mr-2 mb-1" />
-                    开始优化
-                  </AnimatedButton>
-                </Link>
-                <Link href="/help" passHref>
-                  <AnimatedButton>
-                    <FaQuestionCircle className="inline-block mr-2 mb-1" />
-                    使用教程
-                  </AnimatedButton>
-                </Link>
-              </div>
             </motion.div>
             <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center" style={{ marginLeft: '50px' }}>
               <Suspense fallback={
@@ -176,6 +171,84 @@ export default function Home() {
               }>
                 <IconCloud />
               </Suspense>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <section className="mt-32 w-full">
+            <motion.h2 
+              className="text-4xl font-bold mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+              initial="hidden"
+              animate="visible"
+              variants={titleAnimation}
+            >
+              功能模块
+            </motion.h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { 
+                  title: "合约优化器", 
+                  icon: <FaChartLine className="w-8 h-8" />, 
+                  desc: "输入智能合约反编译代码，选择合约里指定的函数进行优化",
+                  href: "/custom-optimization" 
+                },
+                { 
+                  title: "链上合约优化", 
+                  icon: <FaTools className="w-8 h-8" />, 
+                  desc: "输入合约地址，与智能合约平台交互，优化整个智能合约的反编译代码",
+                  href: "/contract-optimization" 
+                },
+                { 
+                  title: "智能合约库", 
+                  icon: <FaDatabase className="w-8 h-8" />, 
+                  desc: "浏览和搜索已优化的智能合约集合，为用户提供便捷的合约优化查询",
+                  href: "/library" 
+                }
+              ].map((item, index) => (
+                <Link href={item.href} key={index}>
+                  <motion.div
+                    className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl shadow-lg border border-gray-700 hover:border-cyan-500 transition-all duration-300 cursor-pointer group h-[280px] flex flex-col justify-center"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    whileHover={{ 
+                      scale: 1.05, 
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+                      background: "linear-gradient(to bottom right, #1e293b, #0f172a)"
+                    }}
+                  >
+                    <motion.div 
+                      className="flex flex-col items-center text-center space-y-6"
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.div 
+                        className="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full p-4 mb-4 group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300"
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.8 }}
+                      >
+                        {item.icon}
+                      </motion.div>
+                      <motion.h3 
+                        className="text-2xl font-semibold text-cyan-300 group-hover:text-cyan-400 transition-colors"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {item.title}
+                      </motion.h3>
+                      <motion.p 
+                        className="text-gray-300 group-hover:text-white transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {item.desc}
+                      </motion.p>
+                    </motion.div>
+                  </motion.div>
+                </Link>
+              ))}
             </div>
           </section>
         </AnimatedSection>
@@ -739,12 +812,12 @@ export default function Home() {
               animate="visible"
               variants={titleAnimation}
             >
-              工具特色
+              项目特色
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
                 { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低；并且可以集成不同的大型语言模型，能够适应不同的应用场景", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输输出", desc: "结合静态分析和大型语言模型，能够更准确地识别函数边界、变量类型和合约属性，显著提升反编译输出的准确性和可读性", icon: "/icons/accurate.svg" },
+                { title: "精准优化反编译输出", desc: "结合静态分析和大型语言模型，能够更准确地识别函数边界、变量类型和合约属性，著提升反编译输出准确性和可读性", icon: "/icons/accurate.svg" },
                 { title: "多维度依赖关系分析", desc: "利用依赖关系（控制流依赖、类型依赖和状态依赖）构建合约依赖图，更全面地捕捉代码中的关键语义信息", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div

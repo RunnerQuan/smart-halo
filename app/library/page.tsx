@@ -62,7 +62,7 @@ export default function Library() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              浏览和搜索我们的提前优化好的智能合约集合
+              浏览和搜索我们提前优化好的智能合约集合
             </motion.p>
           </div>
 
