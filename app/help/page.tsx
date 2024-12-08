@@ -104,17 +104,13 @@ export default function Help() {
         >
           <h2 className="text-3xl font-bold mb-6 text-center text-cyan-300">常见问题</h2>
           <div className="space-y-6">
-            <div>
+            <div className="text-center">
               <h3 className="text-xl font-semibold mb-2 text-purple-400">SmartHalo 支持哪些区块链平台？</h3>
               <p className="text-gray-300">SmartHalo 支持 Ethereum、BSC、Polygon 等主流区块链平台的智能合约反编译代码优化。</p>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2 text-purple-400">优化过程需要多长时间？</h3>
-              <p className="text-gray-300">大多数合约的优化过程只需要几秒钟。对于特别复杂的合约，可能需要稍长一些的时间。</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2 text-purple-400">优化后的代码是否安全？</h3>
-              <p className="text-gray-300">是的，我们的优化过程保证不会改变合约的功能和安全性。我们的 AI 系统经过严格训练，只进行安全的优化操作。</p>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2 text-purple-400">优化后的代码是否准确？</h3>
+              <p className="text-gray-300">是的，我们确保优化过程对智能合约的变量类型、合约属性和函数边界进行恢复，保证代码的准确性。</p>
             </div>
           </div>
         </motion.div>
