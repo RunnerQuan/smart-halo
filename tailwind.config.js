@@ -10,7 +10,7 @@ module.exports = {
   		fontFamily: {
   			harmonyos: ['HarmonyOS Sans', 'sans-serif'],
   			song: ['Noto Serif SC', 'serif'],
-  			'noto-sans': ['Noto Sans SC', 'sans-serif'],
+  			'noto-sans': ['"Noto Sans SC"', 'sans-serif'],
   			'tech': ['Orbitron', 'sans-serif']
   		},
   		backgroundImage: {
@@ -65,17 +65,13 @@ module.exports = {
   			}
   		},
   		animation: {
-  			pulse: 'pulse var(--duration) ease-out infinite'
+  			'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   		},
   		keyframes: {
   			pulse: {
-  				'0%, 100%': {
-  					boxShadow: '0 0 0 0 var(--pulse-color)'
-  				},
-  				'50%': {
-  					boxShadow: '0 0 0 8px var(--pulse-color)'
-  				}
-  			}
+  				'0%, 100%': { opacity: 1 },
+  				'50%': { opacity: .5 },
+  			},
   		}
   	}
   },

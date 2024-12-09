@@ -312,22 +312,30 @@ export default function ContractOptimizationDetails() {
         }
 
         /* 自定义滚动条样式 */
-        .syntax-highlighter::-webkit-scrollbar {
+        .syntax-highlighter::-webkit-scrollbar,
+        .syntax-highlighter pre::-webkit-scrollbar,
+        .syntax-highlighter code::-webkit-scrollbar {
           width: 4px;
           height: 4px;
         }
 
-        .syntax-highlighter::-webkit-scrollbar-track {
+        .syntax-highlighter::-webkit-scrollbar-track,
+        .syntax-highlighter pre::-webkit-scrollbar-track,
+        .syntax-highlighter code::-webkit-scrollbar-track {
           background: rgba(128, 128, 128, 0.1);
           border-radius: 2px;
         }
 
-        .syntax-highlighter::-webkit-scrollbar-thumb {
+        .syntax-highlighter::-webkit-scrollbar-thumb,
+        .syntax-highlighter pre::-webkit-scrollbar-thumb,
+        .syntax-highlighter code::-webkit-scrollbar-thumb {
           background: rgba(147, 51, 234, 0.3);
           border-radius: 2px;
         }
 
-        .syntax-highlighter::-webkit-scrollbar-thumb:hover {
+        .syntax-highlighter::-webkit-scrollbar-thumb:hover,
+        .syntax-highlighter pre::-webkit-scrollbar-thumb:hover,
+        .syntax-highlighter code::-webkit-scrollbar-thumb:hover {
           background: rgba(147, 51, 234, 0.5);
         }
 
