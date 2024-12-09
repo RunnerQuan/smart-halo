@@ -131,7 +131,7 @@ export default function Home() {
         <AnimatedSection>
           <section className="flex flex-col md:flex-row items-start justify-between mt-16">
             <motion.div 
-              className="md:w-1/2 text-left relative"
+              className="md:w-1/2 text-left relative flex flex-col items-center justify-center"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -139,29 +139,113 @@ export default function Home() {
               <div className="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/20 rounded-full filter blur-[120px] pointer-events-none" />
               <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-500/20 rounded-full filter blur-[120px] pointer-events-none" />
               
-              <h1 className="text-8xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 relative">
-                SmartHalo
+              <h1 className="text-8xl font-bold mb-6 relative">
+                <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 font-[Cinzel] tracking-wider">
+                  SmartHalo
+                </span>
               </h1>
-              <h2 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+
+              <motion.h2 
+                className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
                 智能合约反编译代码增强与优化工具
-              </h2>
-              <p className="text-xl text-white mb-8 max-w-xl">
-                SmartHalo - 让智能合约反编译输出更清晰、更准确、更易读
-              </p>
-              <ul className="mb-8 space-y-2">
-                <li className="flex items-center text-white">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  通过静态分析和大语言模型的结合，有效解决变量类型恢复、函数边界识别等问题
-                </li>
-                <li className="flex items-center text-white">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  优化现有反编译器输出，帮助用户更好地理解智能合约字节码
-                </li>
-                <li className="flex items-center text-white">
-                  <svg className="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  支持代码重编译，验证输出准确性，确保反编译输出优化结果与原始程序行为一致
-                </li>
-              </ul>
+              </motion.h2>
+
+              <motion.p 
+                className="text-xl text-white mb-8 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                SmartHalo - 让智能合约反编译代码更清晰、更准确、更易读
+              </motion.p>
+
+              <motion.div 
+                className="mb-8 w-full max-w-[400px] mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 text-center">
+                  反编译代码增强和优化的内容
+                </h3>
+                <div className="space-y-3">
+                  <motion.div 
+                    className="group relative flex items-center justify-center bg-gradient-to-r from-purple-900/20 to-transparent p-3 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="absolute inset-0">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                      <div className="absolute -inset-2 bg-purple-500/20 blur-3xl group-hover:bg-purple-500/30 transition-all duration-500 opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div className="flex items-center w-fit relative z-10">
+                      <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mr-4 backdrop-blur-sm relative overflow-hidden group-hover:bg-purple-500/20 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+                        <Image 
+                          src="/icons/variable.svg"
+                          alt="变量类型"
+                          width={36}
+                          height={36}
+                          className="relative z-10"
+                        />
+                      </div>
+                      <span className="text-xl font-black text-purple-100/90 group-hover:text-purple-200 transition-colors duration-300 relative z-10 font-noto-sans tracking-wider">变量类型</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="group relative flex items-center justify-center bg-gradient-to-r from-pink-900/20 to-transparent p-3 rounded-xl border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300 overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="absolute inset-0">
+                      <div className="absolute inset-0 bg-gradient-to-r from-pink-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                      <div className="absolute -inset-2 bg-pink-500/20 blur-3xl group-hover:bg-pink-500/30 transition-all duration-500 opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div className="flex items-center w-fit relative z-10">
+                      <div className="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mr-4 backdrop-blur-sm relative overflow-hidden group-hover:bg-pink-500/20 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+                        <Image 
+                          src="/icons/attribute.svg"
+                          alt="合约属性"
+                          width={28}
+                          height={28}
+                          className="relative z-10"
+                        />
+                      </div>
+                      <span className="text-xl font-black text-pink-100/90 group-hover:text-pink-200 transition-colors duration-300 relative z-10 font-noto-sans tracking-wider">合约属性</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="group relative flex items-center justify-center bg-gradient-to-r from-blue-900/20 to-transparent p-3 rounded-xl border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="absolute inset-0">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                      <div className="absolute -inset-2 bg-blue-500/20 blur-3xl group-hover:bg-blue-500/30 transition-all duration-500 opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div className="flex items-center w-fit relative z-10">
+                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mr-4 backdrop-blur-sm relative overflow-hidden group-hover:bg-blue-500/20 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+                        <Image 
+                          src="/icons/function.svg"
+                          alt="函数边界"
+                          width={28}
+                          height={28}
+                          className="relative z-10"
+                        />
+                      </div>
+                      <span className="text-xl font-black text-blue-100/90 group-hover:text-blue-200 transition-colors duration-300 relative z-10 font-noto-sans tracking-wider">函数边界</span>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
             </motion.div>
             <div className="md:w-1/2 mt-8 md:mt-0 flex items-center justify-center" style={{ marginLeft: '50px' }}>
               <Suspense fallback={
@@ -191,7 +275,7 @@ export default function Home() {
                 { 
                   title: "合约优化器", 
                   icon: <FaChartLine className="w-8 h-8" />, 
-                  desc: "输入智能合约反编译代码，选择合约里指定的函数进行优化",
+                  desc: "输入智能合约反编译代码，选择合约里定的函数进行优化",
                   href: "/custom-optimization" 
                 },
                 { 
@@ -357,7 +441,7 @@ export default function Home() {
 
               {/* 右侧：GPT对比和重入漏洞检测的垂直布局 */}
               <div className="flex flex-col gap-8">
-                {/* GPT-3.5 vs GPT-4 对比 - 折线图 */}
+                {/* GPT-3.5 vs GPT-4 对比 - 线图 */}
                 <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
                   <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">使用GPT-3.5 vs 使用GPT-4o 效果对比</h3>
                   <Line
@@ -447,7 +531,7 @@ export default function Home() {
                   />
                 </div>
 
-                {/* 重入漏洞检测性能 - 环形图 */}
+                {/* 重入漏洞检测性能 - 环图 */}
                 <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700">
                   <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">下游任务有效性 - 重入漏洞检测</h3>
                   <div className="relative" style={{ maxHeight: '300px' }}>
@@ -643,7 +727,7 @@ export default function Home() {
                 />
               </div>
 
-              {/* 整数溢出漏洞检测性能 */}
+              {/* 整数溢出漏洞检测���能 */}
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700" style={{ height: '500px' }}>
                 <h3 className="text-xl font-semibold mb-4 text-cyan-300 text-center">下游任务有效性 - 整数溢出漏洞检测</h3>
                 <Bar
@@ -816,9 +900,9 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低；并且可以集成不同的大型语言模型，能够适应不同的应用场景", icon: "/icons/speed.svg" },
+                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低；并且可以集成同的大型语言模型，能够适应不同的应用场景", icon: "/icons/speed.svg" },
                 { title: "精准优化反编译输出", desc: "结合静态分析和大型语言模型，能够更准确地识别函数边界、变量类型和合约属性，著提升反编译输出准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "多维度依赖关系分析", desc: "利用依赖关系（控制流依赖、类型依赖和状态依赖）构建合约依赖图，更全面地捕捉代码中的关键语义信息", icon: "/icons/customize.svg" }
+                { title: "多维度依赖关系分析", desc: "利用依赖关系（控制流依赖、类型依赖、状态依赖）构建合约依赖图，更全面地捕捉代码中的关键语义信息", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -841,7 +925,7 @@ export default function Home() {
       </div>
 
       <footer className="mt-32 text-center text-gray-500">
-        <p>&copy; 2024 SmartHalo. 保留所有权利。</p>
+        <p>&copy; 2024 SmartHalo. 保留所有权利</p>
       </footer>
     </main>
   );
