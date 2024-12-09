@@ -106,15 +106,13 @@ export default function ContractOptimizationDetails() {
     try {
       setIsVulnerabilityDetecting(true);
       
-      let address = searchParams.get('address');
+      let address = searchParams?.get('address');
       if (!address) {
         address = sessionStorage.getItem('originalAddress');
       }
       if (!address) {
         throw new Error('未找到合约地址');
       }
-
-      const bytecode = sessionStorage.getItem('bytecode');
 
       const response = await fetch('http://172.18.197.84:2525/run_inter_task', {
         method: 'POST',
@@ -123,7 +121,6 @@ export default function ContractOptimizationDetails() {
         },
         body: JSON.stringify({ 
           address,
-          bytecode
         }),
       });
 
@@ -140,7 +137,7 @@ export default function ContractOptimizationDetails() {
 
         if (statusData.state === 'SUCCESS') {
           sessionStorage.setItem('vulnerabilityCode', optimizedCode);
-          sessionStorage.setItem('vulnerabilityResult', JSON.stringify(statusData.result));
+          sessionStorage.setItem('vulnerabilityResult', statusData.result);
           setIsVulnerabilityDetecting(false);
           router.push('/vulnerability-detection');
           break;
