@@ -345,7 +345,7 @@ export default function Home() {
               animate="visible"
               variants={titleAnimation}
             >
-              测试结果
+              优化效果可视化
             </motion.h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
