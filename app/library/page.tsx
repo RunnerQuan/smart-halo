@@ -54,7 +54,7 @@ export default function Library() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              智能合约库
+              智能合约反编译代码库
             </motion.h1>
             <motion.p
               className="text-xl text-gray-300"
@@ -62,7 +62,7 @@ export default function Library() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              浏览和搜索我们提前优化好的智能合约集合
+              持续同步链上合约，拥有海量的智能合约反编译码，支持快速查询和响应
             </motion.p>
           </div>
 

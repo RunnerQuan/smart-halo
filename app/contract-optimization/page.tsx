@@ -143,7 +143,7 @@ export default function ContractOptimization() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          输入合约地址，查看反编译输出优化详细信息
+          输入合约地址，实时获取链上合约，实时生成优化反编译码，支持漏洞检测
         </motion.p>
 
         <motion.div 

@@ -285,9 +285,9 @@ export default function Home() {
                   href: "/contract-optimization" 
                 },
                 { 
-                  title: "智能合约库", 
+                  title: "智能合约反编译代码库", 
                   icon: <FaDatabase className="w-8 h-8" />, 
-                  desc: "浏览和搜索已优化的智能合约集合，为用户提供便捷的合约优化查询",
+                  desc: "浏览和搜索已优化的智能合约反编译代码集合，为用户提供便捷的合约优化查询",
                   href: "/library" 
                 }
               ].map((item, index) => (
@@ -900,9 +900,9 @@ export default function Home() {
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                { title: "轻量化设计", desc: "采用轻量化设计，运行高效、资源占用低；并且可以集成同的大型语言模型，能够适应不同的应用场景", icon: "/icons/speed.svg" },
-                { title: "精准优化反编译输出", desc: "结合静态分析和大型语言模型，能够更准确地识别函数边界、变量类型和合约属性，著提升反编译输出准确性和可读性", icon: "/icons/accurate.svg" },
-                { title: "多维度依赖关系分析", desc: "利用依赖关系（控制流依赖、类型依赖、状态依赖）构建合约依赖图，更全面地捕捉代码中的关键语义信息", icon: "/icons/customize.svg" }
+                { title: "轻量化的工具设计", desc: "集成大模型的强大能力，避免高开销的模型训练；实现局部代码自定义优化", icon: "/icons/speed.svg" },
+                { title: "高精度的反编译码优化与漏洞检测", desc: "函数边界精度超过80%，变量类型准确率超过80%，合约属性准确率提升超过5倍，支持下游任务", icon: "/icons/accurate.svg" },
+                { title: "海量的查询数据库与广泛平台支持", desc: "海量同步的链上合约优化反编译码，支持Ethereum BNB等5个主流区块链平台", icon: "/icons/customize.svg" }
               ].map((item, index) => (
                 <motion.div
                   key={index}
